@@ -1,0 +1,42 @@
+{
+    "pages": [
+        "pages/home/home",
+        "pages/message/message",
+        "pages/personal/personal",
+        "pages/cart/cart",
+        "pages/market/market"
+    ],
+    "subPackages": [],
+    "window": {
+        "navigationBarTextStyle": "black",
+        "navigationBarTitleText": "uni-app",
+        "navigationBarBackgroundColor": "#F8F8F8",
+        "backgroundColor": "#F8F8F8"
+    },
+    "tabBar": {
+        "list": [
+            {
+                "pagePath": "pages/home/home",
+                "text": "首页"
+            },
+            {
+                "pagePath": "pages/market/market",
+                "text": "逛逛"
+            },
+            {
+                "pagePath": "pages/message/message",
+                "text": "消息"
+            },
+            {
+                "pagePath": "pages/cart/cart",
+                "text": "购物车"
+            },
+            {
+                "pagePath": "pages/personal/personal",
+                "text": "我的"
+            }
+        ]
+    },
+    "usingComponents": {},
+    "sitemapLocation": "sitemap.json"
+}
