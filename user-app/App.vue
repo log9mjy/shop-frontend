@@ -13,5 +13,9 @@
 </script>
 
 <style>
-	/*每个页面公共css */
+	.page {
+		display: flex;
+		height: 100vh;
+		flex-direction: column;
+	}
 </style>
