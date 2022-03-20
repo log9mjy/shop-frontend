@@ -27,4 +27,9 @@
 		padding: 15rpx 20rpx;
 		box-sizing: border-box;
 	}
+	
+	.container{
+		padding: 0 30rpx;
+		box-sizing: border-box;
+	}
 </style>
