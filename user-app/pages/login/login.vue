@@ -49,10 +49,7 @@
 			},
 			change() {
 				this.model = this.model === 1 ? 2 : 1;
-				console.log(this.model)
 			}
-
-
 		}
 	}
 </script>

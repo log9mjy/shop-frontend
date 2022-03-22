@@ -45,36 +45,39 @@
 				"navigationBarTextStyle": "white"
 			}
 
+		}, {
+			"path": "pages/personal/set",
+			"style": {
+				"navigationBarTitleText": "设置",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "pages/login/login",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "pages/address/list",
+			"style": {
+
+				"enablePullDownRefresh": false,
+				"navigationStyle": "custom"
+			}
+
+		}, {
+			"path": "pages/address/detail",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false,
+				"navigationStyle": "custom"
+			}
+
 		}
 	    ,{
-            "path" : "pages/personal/set",
-            "style" :                                                                                    
-            {
-                "navigationBarTitleText": "设置",
-                "enablePullDownRefresh": false
-            }
-            
-        }
-        ,{
-            "path" : "pages/login/login",
-            "style" :                                                                                    
-            {
-                "navigationBarTitleText": "",
-                "enablePullDownRefresh": false
-            }
-            
-        }
-        ,{
-            "path" : "pages/address/list",
-            "style" :                                                                                    
-            {
-                "navigationBarTitleText": "我的收货地址",
-                "enablePullDownRefresh": false
-            }
-            
-        }
-        ,{
-            "path" : "pages/address/detail",
+            "path" : "pages/goods/detail",
             "style" :                                                                                    
             {
                 "navigationBarTitleText": "",
@@ -90,8 +93,8 @@
 		"backgroundColor": "#F8F8F8"
 	},
 	"tabBar": {
-		"color":"#515151",
-		"selectedColor":"#ff5601",
+		"color": "#515151",
+		"selectedColor": "#ff5601",
 		"list": [{
 			"pagePath": "pages/home/home",
 			"iconPath": "static/icon/1.png",

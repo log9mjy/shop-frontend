@@ -27,9 +27,50 @@
 		padding: 15rpx 20rpx;
 		box-sizing: border-box;
 	}
-	
-	.container{
+
+	.container {
 		padding: 0 30rpx;
 		box-sizing: border-box;
+	}
+
+	.nav-view {
+		display: flex;
+		background-color: #F8F8F8;
+		padding: 0 30rpx;
+		height: 80rpx;
+		align-items: center;
+		justify-content: space-between;
+	}
+
+	.nav-left {
+		display: flex;
+		align-items: center;
+	}
+
+	.nav-left image {
+		width: 40rpx;
+		height: 40rpx;
+	}
+
+	.nav-left text {
+		margin-left: 15rpx;
+		color: #3333333;
+		font-size: 30rpx;
+	}
+
+	.nav-right {
+		color: #F0AD4E;
+		font-size: 30rpx;
+	}
+
+	.back-color {
+		background: linear-gradient(to right, #ff850c, #ff5500);
+		color: #FFFFFF;
+	}
+
+	.center {
+		display: flex;
+		justify-content: center;
+		align-items: center;
 	}
 </style>
