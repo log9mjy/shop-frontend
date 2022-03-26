@@ -1,21 +1,23 @@
 <template>
     <div>
         <div class="layout-logo">
-            <span>小猴乐厨购</span>
+            <span>做大做强</span>
         </div>
         <div class="layout-user">
-            <img :src='info.avatar' alt="你好"/>
-            <span class="nickname">{{info.nickname}}</span>
-            <span class="role">{{info.role}}</span>
+            <img :src='info.photo' alt="你好"/>
+            <span class="nickname">{{info.username}}</span>
+            <span class="role">{{info.userTypeName}}</span>
         </div>
         <el-menu :default-active="nativePath" background-color="#28333e" text-color="#d2d2d2"
                  active-text-color="#36b368">
-            <el-submenu v-if="item.children&&item.children.length>0" v-for="item in menus" :key="item.id" :index="item.path">
+            <el-submenu v-if="item.children&&item.children.length>0" v-for="item in menus" :key="item.id"
+                        :index="item.path">
                 <template slot="title">
                     <i :class="item.icon"></i>
                     <span>{{item.title}}</span>
                 </template>
-                <el-menu-item v-for="child in item.children" :key="child.id" @click="handlerPath(child)" :index="child.path">
+                <el-menu-item v-for="child in item.children" :key="child.id" @click="handlerPath(child)"
+                              :index="child.path">
                     <span>{{child.title}}</span>
                 </el-menu-item>
             </el-submenu>
@@ -42,15 +44,58 @@
         },
         created() {
             this.info = get_info();
-            if (!this.info) {
-                user_info().then(res => {
-                    this.info = res.data;
-                    this.menus = res.data.menus;
-                    set_info(this.info);
-                })
-            } else {
-                this.menus = this.info.menus
-            }
+            this.menus = [{
+                title: "首页",
+                icon: "el-icon-menu",
+                path: "/home"
+            }, {
+                title: "商品管理",
+                icon: "el-icon-goods",
+                path: "/goods",
+                children: [{
+                    title: "商品列表",
+                    path: "/goods/list",
+                }, {
+                    title: "品牌",
+                    path: "/goods/brand",
+                }, {
+                    title: "商品分类",
+                    path: "/goods/category",
+                }
+                ]
+            }, {
+                title: "商城装修",
+                icon: "el-icon-s-shop",
+                path: "/wrapper",
+                children: [{
+                    title: "广告位",
+                    path: "/wrapper/ad",
+                }]
+            }, {
+                title: "用户管理",
+                icon: "el-icon-user",
+                path: "/user",
+                children: [{
+                    title: "用户列表",
+                    path: "/user/list",
+                }]
+            }, {
+                title: "商家管理",
+                icon: "el-icon-s-custom",
+                path: "/merchant",
+                children: [{
+                    title: "商家列表",
+                    path: "/merchant/list",
+                }]
+            }, {
+                title: "会员充值",
+                icon: "el-icon-s-check",
+                path: "/member",
+                children: [{
+                    title: "充值记录",
+                    path: "/member/recharge",
+                }]
+            }]
         },
         watch: {
             $route(v1) {
@@ -81,7 +126,7 @@
     }
 
     .layout-user {
-       padding-bottom: 20px;
+        padding-bottom: 20px;
         width: 100%;
         display: flex;
         flex-direction: column;

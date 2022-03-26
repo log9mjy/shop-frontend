@@ -7,8 +7,8 @@
             <span>{{new Date().getDate()+'日'}}</span>
         </div>
         <div class="layout-head-user" v-if="info" @mouseenter="visible=true" @mouseleave="visible=false">
-            <img class="user-avatar" v-if="info.avatar" :src="info.avatar" alt=""/>
-            <span class="user-nickname">{{info.nickname}}</span>
+            <img class="user-avatar" v-if="info.photo" :src="info.photo" alt=""/>
+            <span class="user-nickname">{{info.username}}</span>
             <i style="color:#888" :class="[!visible?'el-icon-caret-bottom':'el-icon-caret-top']"></i>
             <div class="user-info" v-if="visible">
                 <div @click="updatePassword">修改密码</div>
@@ -22,7 +22,7 @@
 
     import {get_info, remove_info, set_info} from "../../../util/userInfo";
     import {remove_token} from "../../../util/token";
-    import {user_logout, user_info} from "../../../api/admin";
+    import {user_info} from "../../../api/admin";
 
     export default {
         name: "layout-header",
@@ -48,12 +48,10 @@
                 })
             },
             logout() {
-                user_logout().then(() => {
-                    remove_info();
-                    remove_token();
-                    this.$router.push({
-                        path: '/login'
-                    })
+                remove_info();
+                remove_token();
+                this.$router.push({
+                    path: '/login'
                 })
             }
         }

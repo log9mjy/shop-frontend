@@ -63,7 +63,7 @@
 				</view>
 			</view>
 			<view class="goods-list-view">
-				<view v-for="(item,index) in goodsList" :key="index" class="goods-wrapper">
+				<view v-for="(item,index) in goodsList" :key="index" class="goods-wrapper" @tap="linkDetail">
 					<view>
 						<image class="goods-image" :src="item.coverPic"></image>
 					</view>
@@ -166,7 +166,13 @@
 		methods: {
 			changeWd(e) {
 				this.activeWdWipper = e.detail.current;
+			},
+			linkDetail() {
+				uni.navigateTo({
+					url: "../goods/detail"
+				})
 			}
+
 		}
 	}
 </script>

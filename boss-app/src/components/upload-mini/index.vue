@@ -7,26 +7,17 @@
         </div>
         <div :class="['lk-upload',fileList.length>0?'margin-left':'']" @click="handleClick"
              v-if="limit > fileList.length">
-            <input v-if="cropped" class="lk-upload-input" type="file" @change="choice" ref="uploadImage"
-                   accept=".jpg, .jpeg, .png, .gif"/>
-            <input v-else class="lk-upload-input" type="file" @change="doUpload" ref="uploadImage"
+            <input class="lk-upload-input" type="file" @change="doUpload" ref="uploadImage"
                    accept=".jpg, .jpeg, .png, .gif"/>
         </div>
-        <el-dialog v-if="cropped" :visible.sync="visible" title="裁剪图片" width="560px" append-to-body
-                   class="cropper-wrapper">
-            <i slot="title" class="el-icon-check sure-icon" @click="cropPic"></i>
-            <vue-cropper ref="cropper" :min-canvas-width="500" :aspect-ratio="aspectRatio" :src="imgSrc"/>
-        </el-dialog>
+
     </div>
 </template>
 <script>
-    import {upload_token} from "../../api/upload";
-    import {upload} from "qiniu-js";
-    import VueCropper from 'vue-cropperjs';
-    import 'cropperjs/dist/cropper.css';
+    import {upload} from "../../api/upload";
+
 
     export default {
-        components: {VueCropper},
         props: {
             fileList: {
                 type: Array,
@@ -38,21 +29,8 @@
                 type: Number,
                 default: 1
             },
-            cropped: {
-                default: false,
-                type: Boolean
-            },
-            aspectRatio: {
-                default: 1,
-                type: Number
-            }
         },
-        data() {
-            return {
-                imgSrc: "",
-                visible: false
-            }
-        },
+
         methods: {
             /**
              * 删除图片
@@ -66,81 +44,15 @@
             handleClick() {
                 this.$refs.uploadImage.click();
             },
-            /**
-             * 选择图片
-             */
-            choice(e) {
-                this.$nextTick(() => {
-                    this.visible = true;
-                    const file = e.target.files[0];
-                    if (file.type.indexOf('image/') === -1) {
-                        alert('Please select an image file');
-                        return;
-                    }
-                    if (typeof FileReader === 'function') {
-                        const reader = new FileReader();
-                        reader.onload = (event) => {
-                            this.imgSrc = event.target.result;
-                            this.$refs.cropper.replace(event.target.result);
-                        };
-                        reader.readAsDataURL(file);
-                    } else {
-                        alert('Sorry, FileReader API not supported');
-                    }
-                })
-            },
-            /**
-             * 计算base64 大小
-             */
-            showSize(base64url) {
-                base64url = base64url.substring(22);
-                let equalIndex = base64url.indexOf("=");
-                if (base64url.indexOf("=") > 0) {
-                    base64url = base64url.substring(0, equalIndex);
-                }
-                let strLength = base64url.length;
-                return parseInt(strLength - (strLength / 8) * 2);
-            },
-            /**
-             *  剪切图片
-             */
-            cropPic() {
-                let cropImg = this.$refs.cropper.getCroppedCanvas().toDataURL();
-                upload_token().then(res => {
-                    let prefix = res.data.prefix;
-                    let key = "image/" + new Date().getTime() + ".jpg";
-                    let url = "http://upload-z2.qiniup.com/putb64/" + this.showSize(cropImg) + "/key/" + window.btoa(key);
-                    let xhr = new XMLHttpRequest();
-                    xhr.onreadystatechange = () => {
-                        if (xhr.readyState === 4) {
-                            let url = prefix + "/" + key;
-                            this.$message.success("上传成功");
-                            this.$emit("success", url);
-                            this.visible = false;
-                        }
-                    };
-                    xhr.open("POST", url, true);
-                    xhr.setRequestHeader("Content-Type", "application/octet-stream");
-                    xhr.setRequestHeader("Authorization", 'UpToken ' + res.data.token);
-                    xhr.send(cropImg.substring(22));
-                })
-            },
+
             /**
              * 执行上传事件
              */
             doUpload(e) {
                 const file = e.target.files[0];
-                upload_token().then(res => {
-                    let key = "image/" + new Date().getTime() + ".jpg";
-                    let prefix = res.data.prefix;
-                    const observe = upload(file, key, res.data.token);
-                    observe.subscribe(() => {
-                    }, () => {
-                    }, (res) => {
-                        let url = prefix + "/" + res.key;
-                        this.$message.success("上传成功");
-                        this.$emit("success", url);
-                    });
+                upload(file).then(res => {
+                    this.$message.success("上传成功");
+                    this.$emit("success", res.url);
                 })
             }
         },

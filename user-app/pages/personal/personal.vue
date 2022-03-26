@@ -75,7 +75,7 @@
 					</view>
 				</view>
 				<view class="card ad-view">
-					<view class="tool-item" v-for="(item,index) in tools" :key="index">
+					<view class="tool-item" v-for="(item,index) in tools" :key="index" @tap="linkAd">
 						<image :src="item.image"></image>
 						<text>{{item.title}}</text>
 					</view>
@@ -116,6 +116,11 @@
 			linkSet() {
 				uni.navigateTo({
 					url: "set"
+				})
+			},
+			linkAd(){
+				uni.navigateTo({
+					url: "../address/list"
 				})
 			}
 		}

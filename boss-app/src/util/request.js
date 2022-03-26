@@ -4,8 +4,9 @@ import {get_token, remove_token} from '../util/token'
 import {Message} from "element-ui";
 import router from "../router"
 import {showLoading, hideLoading} from "../util/loading";
+import md5 from 'js-md5';
 
-let baseURL = "http://127.0.0.1:9405";
+let baseURL = "http://ws.paomiao.cn/v1";
 //接口域名
 axios.defaults.baseURL = baseURL;
 
@@ -36,9 +37,7 @@ const post = (url, data, loading) => {
         if (loading) {
             showLoading();
         }
-        axios.post(url, qs.stringify(data), {
-            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-        })
+        axios.post(url, data, {})
             .then((response) => {
                 if (loading) {
                     hideLoading();
@@ -131,9 +130,9 @@ const get_export = (url, params) => {
 // 请求拦截器
 axios.interceptors.request.use(function (config) {
     let token = get_token();
-    if (token) {
-        config["headers"].token = token;
-    }
+    let str = `web|a|b|c|${token}|${Math.floor(new Date().getTime() / 1000)}|`;
+    let sign = md5(str);
+    config.url = config.url + "?_ua=" + str + sign;
     return config;
 }, err => {
     return Promise.reject(err)
@@ -142,16 +141,9 @@ axios.interceptors.request.use(function (config) {
 
 // 响应拦截器
 axios.interceptors.response.use(function (res) {
-    //返回401 去登录
-    if (res.data.errCode === 401) {
-        Message.error(res.data.errMsg);
-        router.push({path: '/login'});
-        remove_token();
-        return
-    }
     //其他类型异常
-    if (res.data.errCode !== 200) {
-        Message.error(res.data.errMsg);
+    if (res.data.state !== 1) {
+        Message.error(res.data.msg);
         return
     }
     return res;

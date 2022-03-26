@@ -3,14 +3,11 @@
         <div class="form">
             <div class="from-title">修改密码</div>
             <el-form size="small" :model="form" label-width="80px" ref="form" :rules="rules">
-                <el-form-item label="旧密码" prop="oldPassword">
-                    <el-input v-model="form.oldPassword" placeholder="旧密码"></el-input>
-                </el-form-item>
                 <el-form-item label="密码" prop="password">
                     <el-input v-model="form.password" placeholder="新密码"></el-input>
                 </el-form-item>
-                <el-form-item label="确认密码" prop="rePassword">
-                    <el-input v-model="form.rePassword" placeholder="新密码"></el-input>
+                <el-form-item label="确认密码" prop="again_password">
+                    <el-input v-model="form.again_password" placeholder="新密码"></el-input>
                 </el-form-item>
             </el-form>
             <div class="form-footer">
@@ -22,7 +19,7 @@
 
 <script>
     import {user_update_password} from "../../api/admin";
-    import {remove_info} from "../../util/userInfo";
+    import {remove_info, get_info} from "../../util/userInfo";
     import {remove_token} from "../../util/token";
 
     export default {
@@ -39,15 +36,13 @@
             };
             return {
                 form: {
-                    oldPassword: '',
                     password: '',
-                    rePassword: ""
+                    again_password: ""
                 },
                 loading: false,
                 rules: {
-                    oldPassword: [{required: true, message: '旧密码不能为空'}],
                     password: [{required: true, message: '密码不能为空'}],
-                    rePassword: [{validator: validatePassword, required: true, trigger: 'blur'}],
+                    again_password: [{validator: validatePassword, required: true, trigger: 'blur'}],
                 }
             }
         },
@@ -56,7 +51,12 @@
                 this.loading = true;
                 this.$refs['form'].validate(valid => {
                     if (valid) {
-                        user_update_password(this.form.oldPassword, this.form.password).then(() => {
+                        let info = get_info();
+                        user_update_password({
+                            mobile: info.mobile,
+                            again_password: this.form.again_password,
+                            password: this.password
+                        }).then(() => {
                             this.loading = false;
                             remove_info();
                             remove_token();
@@ -104,7 +104,7 @@
     }
 
     .form-footer-button {
-        width: 200px;
+        width: 270px;
         margin-left: 60px;
     }
 </style>

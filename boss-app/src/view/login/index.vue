@@ -4,10 +4,10 @@
             <img src="../../assets/image/abc.png" class="login-form-image" alt=""/>
             <div class="login-form-view">
                 <div class="login-title">欢迎登陆</div>
-                <div class="login-sub-title">小猴乐厨购</div>
+                <div class="login-sub-title">做大做强</div>
                 <div class="login-form-item" style="margin-top: 60px">
                     <img class="input-icon" src="../../assets/image/mobile.png" alt=""/>
-                    <input class="login-input" v-model="account" placeholder="账户"/>
+                    <input class="login-input" v-model="mobile" placeholder="电话"/>
                 </div>
                 <div class="login-form-item" style="margin-top: 20px">
                     <img class="input-icon" src="../../assets/image/code.png" alt=""/>
@@ -21,16 +21,15 @@
 </template>
 
 <script>
-    import {login, user_info} from "../../api/admin";
+    import {login} from "../../api/admin";
     import {set_token} from "../../util/token";
     import {set_info} from '../../util/userInfo';
 
     export default {
         data() {
             return {
-                account: "",
+                mobile: "",
                 password: "",
-
             };
         },
         methods: {
@@ -38,20 +37,19 @@
              * 提交表单
              */
             submitForm() {
-                if (!this.account) {
-                    this.$message({type: "error", message: "请输入账户"});
+                if (!this.mobile) {
+                    this.$message({type: "error", message: "请输入电话"});
                     return;
                 }
-                if (!this.account) {
+                if (!this.password) {
                     this.$message({type: "error", message: "请输入密码"});
+                    return;
                 }
-                login(this.account, this.password).then(res => {
-                    set_token(res.data.token);
-                    user_info().then(res => {
-                        set_info(res.data);
-                        this.$router.push({
-                            path: "/",
-                        });
+                login(this.mobile, this.password).then(res => {
+                    set_token(res.data.userData.token);
+                    set_info(res.data.userData);
+                    this.$router.push({
+                        path: "/",
                     });
                 });
             }

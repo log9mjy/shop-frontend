@@ -2,11 +2,11 @@ import {post} from "../util/request";
 
 /**
  * 登录
- * @param account
+ * @param mobile
  * @param password
  */
-export function login(account, password) {
-    return post("admin/login", {account, password}, true)
+export function login(mobile, password) {
+    return post("token/manage-login", {mobile, password}, true)
 }
 
 /**
@@ -16,18 +16,12 @@ export function user_info() {
     return post("admin/info", {}, true)
 }
 
-/**
- * 退出登录
- */
-export function user_logout() {
-    return post("admin/logout", {}, true)
-}
 
 /**
  * 修改密码
  */
-export function user_update_password(oldPassword, password) {
-    return post("admin/updatePassword", {oldPassword, password}, true)
+export function user_update_password(data) {
+    return post("user/update-password", data, true)
 }
 
 /**

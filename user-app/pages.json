@@ -81,6 +81,15 @@
             "style" :                                                                                    
             {
                 "navigationBarTitleText": "",
+                "transparentTitle": "auto"
+            }
+            
+        }
+        ,{
+            "path" : "pages/test/test",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
                 "enablePullDownRefresh": false
             }
             

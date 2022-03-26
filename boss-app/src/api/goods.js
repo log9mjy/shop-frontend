@@ -5,7 +5,7 @@ import {post, post_json} from "../util/request";
  * 规格列表
  */
 export function specification_template() {
-    return post("/spu/specification/template", {})
+    return post("/project/manage-list", {})
 }
 
 /**
@@ -21,7 +21,7 @@ export function goods_add(params) {
  * @param params
  */
 export function goods_page(params) {
-    return post("spu/page", params, true)
+    return post("project/manage-list", params, true)
 }
 
 /**

@@ -29,34 +29,10 @@ const routes = [
             ]
         },
         {
-            path: "/system",
+            path: '/system',
             name: 'System',
             component: layout,
             children: [
-                {
-                    path: 'admin',
-                    name: 'SystemAdmin',
-                    meta: {
-                        title: "管理员"
-                    },
-                    component: () => import('../view/system/admin')
-                },
-                {
-                    path: 'role',
-                    name: 'SystemRole',
-                    meta: {
-                        title: "系统角色"
-                    },
-                    component: () => import('../view/system/role')
-                },
-                {
-                    path: 'permission',
-                    name: 'SystemPermission',
-                    meta: {
-                        title: "权限管理"
-                    },
-                    component: () => import('../view/system/permission')
-                },
                 {
                     path: 'password',
                     name: 'SystemPassword',
@@ -65,14 +41,7 @@ const routes = [
                     },
                     component: () => import('../view/info/password')
                 },
-                {
-                    path: 'config',
-                    name: 'SystemConfig',
-                    meta: {
-                        title: "参数配置"
-                    },
-                    component: () => import('../view/system/config')
-                },
+
             ]
         },
         {
@@ -118,19 +87,26 @@ const routes = [
             component: layout,
             children: [
                 {
-                    path: 'home-ad',
+                    path: 'ad',
                     name: 'WrapperHomeAd',
                     meta: {
-                        title: "首页广告"
+                        title: "广告位"
                     },
                     component: () => import('../view/wrapper/home-ad')
-                }, {
-                    path: 'home-wd',
-                    name: 'WrapperHomeWd',
+                },
+            ]
+        }, {
+            path: "/user",
+            name: 'User',
+            component: layout,
+            children: [
+                {
+                    path: 'list',
+                    name: 'UserList',
                     meta: {
-                        title: "首页橱窗"
+                        title: "用户列表"
                     },
-                    component: () => import('../view/wrapper/home-wd')
+                    component: () => import('../view/user/list')
                 },
             ]
         },
