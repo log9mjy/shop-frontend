@@ -48,7 +48,7 @@
                 const file = e.target.files[0];
                 upload(file).then(res => {
                     this.$message.success("上传成功");
-                    this.$emit("success", res.url);
+                    this.$emit("success", res);
                 })
             }
         },

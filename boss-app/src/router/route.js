@@ -58,6 +58,14 @@ const routes = [
                     component: () => import('../view/goods/category')
                 },
                 {
+                    path: 'brand',
+                    name: 'GoodsGrand',
+                    meta: {
+                        title: "品牌"
+                    },
+                    component: () => import('../view/goods/brand')
+                },
+                {
                     path: 'list',
                     name: 'GoodsList',
                     meta: {
@@ -107,6 +115,35 @@ const routes = [
                         title: "用户列表"
                     },
                     component: () => import('../view/user/list')
+                },
+            ]
+        },
+        {
+            path: "/merchant",
+            name: 'Merchant',
+            component: layout,
+            children: [
+                {
+                    path: 'list',
+                    name: 'MerchantList',
+                    meta: {
+                        title: "商家列表"
+                    },
+                    component: () => import('../view/merchant/list')
+                },
+            ]
+        }, {
+            path: "/member",
+            name: 'member',
+            component: layout,
+            children: [
+                {
+                    path: 'member',
+                    name: 'MemberRecharge',
+                    meta: {
+                        title: "充值记录"
+                    },
+                    component: () => import('../view/member/recharge')
                 },
             ]
         },

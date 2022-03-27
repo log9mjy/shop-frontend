@@ -93,7 +93,7 @@
                 path: "/member",
                 children: [{
                     title: "充值记录",
-                    path: "/member/recharge",
+                    path: "/member/member",
                 }]
             }]
         },

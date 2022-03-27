@@ -1,33 +1,33 @@
 import {post} from "../util/request";
 
 /**
- * 新增分类
- * @param param
+ * 分类列表
+ * @param params
  */
-export function category_add(param) {
-    return post("spu/category/add", param, true)
+export function category_list(params) {
+    return post("/category/manage-list", params, true)
 }
 
 /**
- * 获取分类列表
+ * 品牌新增
+ * @param params
  */
-export function category_list() {
-    return post("spu/category/list", {}, true)
+export function category_add(params) {
+    return post("/category/add", params, true)
 }
 
 /**
- * 编辑分类
- * @param id
- * @param param
+ * 编辑
+ * @param params
  */
-export function category_edit(id, param) {
-    return post("spu/category/edit/" + id, param,true)
+export function category_edit(params) {
+    return post("/category/update", params, true)
 }
 
 /**
- * 删除分类
- * @param id
+ * 删除
+ * @param params
  */
-export function category_del(id) {
-    return post("spu/category/del/" + id, {},true);
+export function category_del(params) {
+    return post("/category/del", params, true)
 }

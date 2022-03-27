@@ -93,7 +93,12 @@ const post_form = (url, file) => {
             headers: {'Content-Type': 'multipart/form-data'}
         })
             .then((response) => {
-                resolve(response.data);
+                let data = response.data;
+                if (data.state === 1) {
+                    resolve(data.data);
+                } else {
+                    Message.error(data.msg)
+                }
             })
             .catch((error) => {
                 reject(error);

@@ -31,3 +31,19 @@ export function goods_page(params) {
 export function goods_detail(params) {
     return post("spu/detail", params, true)
 }
+
+
+/**
+ * 品牌列表
+ */
+export function brand_options() {
+    return post("brand/manage-list", {}, false)
+}
+
+
+/**
+ * 分类列表
+ */
+export function category_options() {
+    return post("category/manage-list", {}, false)
+}

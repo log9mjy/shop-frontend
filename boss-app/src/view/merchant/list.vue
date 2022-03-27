@@ -78,7 +78,7 @@
                 let params = {
                     page: this.pageNumber,
                     content: this.searchForm.name,
-                    user_type: 1,
+                    user_type: 2,
                 };
                 user_list(params).then(res => {
                     this.tableData = res.list;
