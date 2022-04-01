@@ -2,3 +2,6 @@
 /merchant-app/.hbuilderx
 /user-app/.hbuilderx
 /user-app/unpackage
+/boss-app/.idea
+/boss-app/node_modules
+/user-app/node_modules
