@@ -19,81 +19,54 @@
                     <div class="layout-title">基本信息</div>
                     <div class="layout-content">
                         <el-form size="small" ref="base-info" label-width="100px" :model="form" :rules="rules">
-                            <el-form-item label="商品标题" prop="title">
-                                <el-input v-model="form.title" placeholder="输入商品名称" style="width: 400px" type="textarea"
+                            <el-form-item label="商品名称" prop="name">
+                                <el-input v-model="form.name" placeholder="输入商品名称" style="width: 400px" type="textarea"
                                           :maxlength="100" show-word-limit></el-input>
                             </el-form-item>
-                            <el-form-item label="副标题">
-                                <el-input v-model="form.subTitle" placeholder="输入商品简短描述" style="width: 300px"
-                                          type="textarea" :maxlength="50" show-word-limit></el-input>
+                            <el-form-item label="商品说明" prop="project_describe">
+                                <el-input v-model="form.project_describe" placeholder="输入商品说明" style="width: 300px"
+                                          type="textarea" :maxlength="100" show-word-limit></el-input>
                             </el-form-item>
-                            <el-form-item label="商品排序" prop="sort">
-                                <el-input v-model="form.sort" placeholder="输入商品排序" style="width: 200px"></el-input>
-                            </el-form-item>
-                            <el-form-item label="商品状态" prop="status">
-                                <el-radio v-model="form.status" :label="1">上架</el-radio>
-                                <el-radio v-model="form.status" :label="0">下架</el-radio>
-                            </el-form-item>
-                            <el-form-item label="商品分类">
-                                <el-cascader v-model="form.cid" :options="options"
-                                             :props="{label:'title',value:'id'}"></el-cascader>
+                            <el-form-item label="商品品牌" prop="brand_id">
+                                <el-select v-model="form.brand_id" style="width: 100px" clearable>
+                                    <el-option v-for="item in options" :key="item.id" :label="item.name"
+                                               :value="item.id">
+                                    </el-option>
+                                </el-select>
                             </el-form-item>
                         </el-form>
                     </div>
                     <div class="layout-title">商品图片</div>
                     <div class="layout-content">
-                        <upload :limit="5" :file-list="albums" @success="uploadAlbum" @del="delAlbum"></upload>
+                        <upload :limit="5" :file-list="albums.map(i=>i.url)" @success="uploadAlbum"
+                                @del="delAlbum"></upload>
                     </div>
                 </div>
                 <div v-if="step===2">
-                    <div class="layout-title">商品参数</div>
-                    <div class="layout-content">
-                        <div>
-                            <el-button size="mini" icon="el-icon-plus" @click="addAttribute">新增</el-button>
-                        </div>
-                        <div v-for="(item,index) in attributes" :key="index">
-                            <div class="card-wrapper">
-                                <el-input v-model="item.key" style="width: 250px" placeholder="属性"></el-input>
-                                <span style="margin: 0 10px">-</span>
-                                <el-input v-model="item.value" style="width: 250px" placeholder="值"></el-input>
-                                <div class="del" @click="delAttribute(index)">x</div>
-                            </div>
-                        </div>
-                    </div>
                     <div class="layout-title">详情图片</div>
                     <div class="layout-content">
-                        <upload :limit="30" :file-list="details" @success="uploadDetail" @del="delDetail"></upload>
+                        <upload :limit="30" :file-list="details.map(i=>i.url)" @success="uploadDetail"
+                                @del="delDetail"></upload>
                     </div>
                 </div>
                 <div v-if="step===3">
-                    <div class="layout-title">商品类型</div>
-                    <div class="layout-content">
-                        <div class="card-border-wrapper">
-                            <div v-for="(item,index) in specificationsTemplate" :key="index"
-                                 @click="changeType(index)"
-                                 :class="templateIndex===index?'card-border-active':'card-border'">
-                                {{item.title}}
-                            </div>
-                        </div>
+                    <div class="layout-title">商品规格
+                        <el-button @click="addSpecification" size="mini" icon="el-icon-plus">新增</el-button>
                     </div>
-                    <div v-for="(item,index) in specifications" :key="index">
-                        <div class="layout-title">{{item.title}}
-                            <el-button style="margin-left: 10px" size="mini" icon="el-icon-plus" round
-                                       @click="addSpecification(index)">新增
+                    <div v-for="(item,index) in specifications" :key="index" style="position: relative;">
+                        <div class="layout-title">
+                            <el-input style="width: 200px" v-model="item.title" placeholder="输入规格项"/>
+                            <el-button style="margin-left: 10px" icon="el-icon-plus"
+                                       @click="addSpecificationValue(index)">新增
                             </el-button>
                         </div>
                         <div class="layout-content specification-wrapper">
                             <div class="attr-wrapper" v-for="(p,i) in item.values" :key="i">
                                 <el-input v-model="p.value" :placeholder="'输入'+item.title"/>
-                                <div style="margin-top: 10px">
-                                    <mini-upload :limit="5" :file-list="p.albums"
-                                                 v-if="item.isUploadPic"
-                                                 @success="e=>uploadSpecPic(e,index,i)"
-                                                 @del="e=>delSpecPic(e,index,i)"/>
-                                </div>
-                                <div class="del" @click="delSpecification(index,i)">x</div>
+                                <div class="del" @click="delSpecificationValue(index,i)">x</div>
                             </div>
                         </div>
+                        <div class="del-left" @click="delSpecification(index)">x</div>
                     </div>
                     <div class="layout-title">商品规格
                         <el-button @click="refreshSku" size="mini" icon="el-icon-refresh">刷新</el-button>
@@ -104,21 +77,14 @@
                                 <el-form-item v-for="(s,i) in item.specifications" :key="i" :label="s.key">
                                     <el-input style="width: 200px" v-model="s.value" disabled/>
                                 </el-form-item>
-                                <el-form-item label="状态">
-                                    <el-radio v-model="item.status" :label="1">上架</el-radio>
-                                    <el-radio v-model="item.status" :label="0">下架</el-radio>
-                                </el-form-item>
                                 <el-form-item label="价格">
-                                    <el-input v-model="item.price" style="width: 200px" placeholder="输入价格"/>
+                                    <el-input v-model="item.project_price" style="width: 200px" placeholder="输入价格"/>
                                 </el-form-item>
                                 <el-form-item label="库存">
-                                    <el-input v-model="item.inventory" style="width: 200px" placeholder="输入库存"/>
-                                </el-form-item>
-                                <el-form-item label="销量">
-                                    <el-input v-model="item.volume" style="width: 200px" placeholder="输入销量"/>
+                                    <el-input v-model="item.project_stock" style="width: 200px" placeholder="输入库存"/>
                                 </el-form-item>
                                 <el-form-item label="排序">
-                                    <el-input v-model="item.sort" style="width: 200px" placeholder="输入排序"/>
+                                    <el-input v-model="item.specs_seq" style="width: 200px" placeholder="输入排序"/>
                                 </el-form-item>
                             </el-form>
                             <div class="del">x</div>
@@ -145,9 +111,7 @@
 <script>
     import MiniUpload from "../../../components/upload-mini";
     import Upload from "../../../components/upload";
-    import {category_list} from "../../../api/goods_category";
-    import {specification_template} from "../../../api/goods";
-    import {goods_add} from "../../../api/goods";
+    import {brand_options, goods_add} from "../../../api/goods";
 
     export default {
         name: "index",
@@ -160,38 +124,25 @@
                 step: 1,
                 options: [],
                 form: {
-                    title: "",
-                    subTitle: "",
-                    cid: [],
-                    sort: 0,
-                    status: 1
+                    name: "",
+                    project_describe: "",
+                    brand_id: "",
                 },
                 rules: {
-                    title: [{required: true, message: '请输入'}],
-                    status: [{required: true, message: '请选择'}],
-                    sort: [{required: true, message: '请输入'}],
+                    name: [{required: true, message: '请输入'}],
+                    project_describe: [{required: true, message: '请输入'}],
+                    brand_id: [{required: true, message: '请选择'}],
                 },
                 albums: [],
                 details: [],
-                specificationsTemplate: [],
-                templateIndex: 0,
-                attributes: [{key: "", value: ""}],
                 specifications: [],
                 skus: []
             }
         },
         mounted() {
-            category_list().then(res => {
-                this.options = res.data;
+            brand_options().then(res => {
+                this.options = res.list;
             });
-            specification_template().then(res => {
-                this.specificationsTemplate = res.data;
-                this.specifications = this.specificationsTemplate[0].values.map(i => {
-                        return {title: i.value, isUploadPic: i.isUploadPic, values: [{value: "", albums: []}]}
-                    }
-                );
-                this.refreshSku();
-            })
         },
         methods: {
             back() {
@@ -200,47 +151,41 @@
                 })
             },
             save() {
-                // 校验商品名称
-                let title = this.form.title;
-                if (!title) {
-                    this.$message.error("请输入商品名称");
-                    return
-                }
-                // 校验商品规格(规格图和商品主图不能都为空)
-                if (!this.albums || this.albums.length === 0) {
-                    if (!this.specifications || this.specifications.length === 0) {
-                        this.$message.error("请上传商品图");
-                        return
-                    }
-                    for (let specification of this.specifications) {
-                        // 如果规格需要上传图片才判断
-                        if (specification.isUploadPic) {
-                            for (let value of specification.values) {
-                                if (!value.albums || value.albums.length === 0) {
-                                    this.$message.error("商品图和规格图至少上传一种");
-                                    return
-                                }
-                            }
-                        }
-                    }
-                }
                 let params = {
-                    title: this.form.title,
-                    subTitle: this.form.subTitle,
-                    sort: this.form.sort,
-                    status: this.form.status
+                    brand_id: this.form.brand_id + "",
+                    project_describe: this.form.project_describe,
+                    name: this.form.name,
                 };
-                if (this.form.cid.length > 0) {
-                    params.cid1 = this.form.cid[0];
-                    if (this.form.cid.length > 1) {
-                        params.cid2 = this.form.cid[1];
-                    }
+                if (this.albums.length === 0) {
+                    this.$message.error("请上传商品图片");
                 }
-                params.albums = this.albums;
-                params.details = this.details;
-                params.attributes = this.attributes;
-                params.specifications = this.specifications;
-                params.skus = this.skus;
+                let arr = this.albums.map(i => {
+                    return {
+                        is_default: "0",
+                        url: i.path
+                    }
+                });
+                arr[0].is_default = "1";
+                params.shop_image = arr;
+                params.details = this.details.map(i => i.path);
+                let attribute_key = {};
+                this.specifications.map(i => {
+                    attribute_key[i.title] = i.values.map(j => j.value);
+                });
+                params.attribute_key = attribute_key;
+                params.project_specs = this.skus.map(i => {
+                    let specs = i.specifications.map(j => {
+                        let r = {};
+                        r[j.key] = j.value;
+                        return r;
+                    });
+                    return {
+                        specs_seq: i.specs_seq,
+                        project_stock: i.project_stock,
+                        project_price: i.project_price,
+                        project_specs: specs
+                    }
+                });
                 goods_add(params).then(() => {
                     this.$message.success("商品新增成功");
                 })
@@ -280,20 +225,20 @@
             delAttribute(e) {
                 this.attributes.splice(e, 1)
             },
-            addSpecification(e) {
-                this.specifications[e].values.push({value: "", albums: []})
+            delSpecification(i) {
+                this.specifications.splice(i)
             },
-            delSpecification(i, i2) {
+            addSpecification() {
+                this.specifications.push({
+                    title: '',
+                    values: []
+                })
+            },
+            addSpecificationValue(i) {
+                this.specifications[i].values.push({value: ""})
+            },
+            delSpecificationValue(i, i2) {
                 this.specifications[i].values.splice(i2, 1)
-            },
-            changeType(e) {
-                this.templateIndex = e;
-                let values = this.specificationsTemplate[e].values;
-                this.specifications = values.map(i => {
-                        return {title: i.value, isUploadPic: i.isUploadPic, values: [{value: "", albums: []}]}
-                    }
-                );
-                this.refreshSku();
             },
             refreshSku() {
                 this.skus = [];
@@ -307,11 +252,9 @@
                     }
                     skus.push({
                         specifications: arr,
-                        price: 0,
-                        inventory: 0,
-                        volume: 0,
-                        status: 0,
-                        sort: 0,
+                        project_stock: "0",
+                        project_price: "0",
+                        specs_seq: "0"
                     });
                     return;
                 }
@@ -418,6 +361,17 @@
         right: -5px;
         top: -12px;
         cursor: pointer;
+        z-index: 9999;
+    }
+
+    .del-left {
+        position: absolute;
+        color: #ff0000;
+        font-size: 20px;
+        right: 0;
+        top: -12px;
+        cursor: pointer;
+        z-index: 9999;
     }
 
     .card-border, .card-border-active {

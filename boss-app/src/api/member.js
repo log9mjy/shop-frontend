@@ -8,3 +8,8 @@ import {post} from "../util/request";
 export function recharge_list(params) {
     return post("/member-recharge/list", params, true)
 }
+
+
+export function recharge_verify(params) {
+    return post("/member-recharge/audit", params, true)
+}

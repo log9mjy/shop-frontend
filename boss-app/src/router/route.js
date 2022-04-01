@@ -41,6 +41,14 @@ const routes = [
                     },
                     component: () => import('../view/info/password')
                 },
+                {
+                    path: 'info',
+                    name: 'SystemInfo',
+                    meta: {
+                        title: "个人资料"
+                    },
+                    component: () => import('../view/info/info')
+                },
 
             ]
         },
@@ -81,10 +89,10 @@ const routes = [
                     },
                     component: () => import('../view/goods/add')
                 }, {
-                    path: 'detail',
-                    name: 'GoodsDetail',
+                    path: 'edit',
+                    name: 'GoodsEdit',
                     meta: {
-                        title: "商品详情"
+                        title: "商品编辑"
                     },
                     component: () => import('../view/goods/edit')
                 },

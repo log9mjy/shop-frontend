@@ -6,16 +6,15 @@ import {post} from "../util/request";
  * @param params
  */
 export function ad_add(params) {
-    return post("wrapper/ad/add", params, true)
+    return post("advert/add", params, true)
 }
 
 /**
  * 编辑广告
- * @param id
  * @param params
  */
-export function ad_edit(id, params) {
-    return post("wrapper/ad/edit/" + id, params, true)
+export function ad_edit(params) {
+    return post("advert/update", params, true)
 }
 
 /**
@@ -23,13 +22,22 @@ export function ad_edit(id, params) {
  * @param params
  */
 export function ad_list(params) {
-    return post("wrapper/ad/list", params, true)
+    return post("advert/list", params, true)
 }
 
 /**
  * 广告删除
- * @param id
+ * @param params 参数
  */
-export function ad_del(id) {
-    return post("wrapper/ad/del/" + id, {}, true)
+export function ad_del(params) {
+    return post("advert/del/", params, true)
+}
+
+export function type() {
+    return post("basic-data/synchronize-basic", {})
+}
+
+
+export function ad_audit(params) {
+    return post("advert/audit", params, true)
 }

@@ -1,20 +1,29 @@
 import {post, post_json} from "../util/request";
 
-
-/**
- * 规格列表
- */
-export function specification_template() {
-    return post("/project/manage-list", {})
-}
-
 /**
  * 新增商品
  * @param params
  */
 export function goods_add(params) {
-    return post_json("/spu/add", params, true)
+    return post_json("/project/add", params, true)
 }
+
+/**
+ * 修改商品
+ * @param params
+ */
+export function goods_update(params) {
+    return post_json("/project/update", params, true)
+}
+
+/**
+ * 删除商品
+ * @param params
+ */
+export function goods_del(params) {
+    return post_json("/project/del", params, true)
+}
+
 
 /**
  * 商品列表
@@ -29,7 +38,7 @@ export function goods_page(params) {
  * @param params
  */
 export function goods_detail(params) {
-    return post("spu/detail", params, true)
+    return post("project/detail-page", params, true)
 }
 
 

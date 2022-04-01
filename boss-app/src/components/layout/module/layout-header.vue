@@ -12,6 +12,7 @@
             <i style="color:#888" :class="[!visible?'el-icon-caret-bottom':'el-icon-caret-top']"></i>
             <div class="user-info" v-if="visible">
                 <div @click="updatePassword">修改密码</div>
+                <div @click="updateInfo">个人资料</div>
                 <div @click="logout">注销登录</div>
             </div>
         </div>
@@ -45,6 +46,11 @@
             updatePassword() {
                 this.$router.push({
                     path: "/system/password"
+                })
+            },
+            updateInfo(){
+                this.$router.push({
+                    path: "/system/info"
                 })
             },
             logout() {

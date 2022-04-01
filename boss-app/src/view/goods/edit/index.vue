@@ -19,83 +19,54 @@
                     <div class="layout-title">基本信息</div>
                     <div class="layout-content">
                         <el-form size="small" ref="base-info" label-width="100px" :model="form" :rules="rules">
-                            <el-form-item label="商品标题" prop="title">
-                                <el-input v-model="form.title" placeholder="输入商品名称" style="width: 400px" type="textarea"
+                            <el-form-item label="商品名称" prop="name">
+                                <el-input v-model="form.name" placeholder="输入商品名称" style="width: 400px" type="textarea"
                                           :maxlength="100" show-word-limit></el-input>
                             </el-form-item>
-                            <el-form-item label="副标题">
-                                <el-input v-model="form.subTitle" placeholder="输入商品简短描述" style="width: 300px"
-                                          type="textarea" :maxlength="50" show-word-limit></el-input>
+                            <el-form-item label="商品说明" prop="project_describe">
+                                <el-input v-model="form.project_describe" placeholder="输入商品说明" style="width: 300px"
+                                          type="textarea" :maxlength="100" show-word-limit></el-input>
                             </el-form-item>
-                            <el-form-item label="商品排序" prop="sort">
-                                <el-input v-model="form.sort" placeholder="输入商品排序" style="width: 200px"></el-input>
-                            </el-form-item>
-                            <el-form-item label="商品状态" prop="status">
-                                <el-radio v-model="form.status" :label="1">上架</el-radio>
-                                <el-radio v-model="form.status" :label="0">下架</el-radio>
-                            </el-form-item>
-                            <el-form-item label="商品分类">
-                                <el-cascader v-model="form.cid" :options="options"
-                                             :props="{label:'title',value:'id'}"></el-cascader>
+                            <el-form-item label="商品品牌" prop="brand_id">
+                                <el-select v-model="form.brand_id" style="width: 100px" clearable>
+                                    <el-option v-for="item in options" :key="item.id" :label="item.name"
+                                               :value="item.id">
+                                    </el-option>
+                                </el-select>
                             </el-form-item>
                         </el-form>
                     </div>
-                    <div style="margin-top: 10px">
-                        <el-button type="primary" size="mini" icon="el-icon-upload2">保存</el-button>
-                    </div>
                     <div class="layout-title">商品图片</div>
                     <div class="layout-content">
-                        <upload :limit="5" :file-list="albums" @success="uploadAlbum" @del="delAlbum"></upload>
-                    </div>
-                    <div style="margin-top: 10px">
-                        <el-button type="primary" size="mini" icon="el-icon-upload2">保存</el-button>
+                        <upload :limit="5" :file-list="albums.map(i=>i.url)" @success="uploadAlbum"
+                                @del="delAlbum"></upload>
                     </div>
                 </div>
                 <div v-if="step===2">
-                    <div class="layout-title">商品参数</div>
-                    <div class="layout-content">
-                        <div>
-                            <el-button size="mini" icon="el-icon-plus" @click="addAttribute">新增</el-button>
-                        </div>
-                        <div v-for="(item,index) in attributes" :key="index">
-                            <div class="card-wrapper">
-                                <el-input v-model="item.key" style="width: 250px" placeholder="属性"></el-input>
-                                <span style="margin: 0 10px">-</span>
-                                <el-input v-model="item.value" style="width: 250px" placeholder="值"></el-input>
-                                <div class="del" @click="delAttribute(index)">x</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div style="margin-top: 10px">
-                        <el-button type="primary" size="mini" icon="el-icon-upload2">保存</el-button>
-                    </div>
                     <div class="layout-title">详情图片</div>
                     <div class="layout-content">
-                        <upload :limit="30" :file-list="details" @success="uploadDetail" @del="delDetail"></upload>
-                    </div>
-                    <div style="margin-top: 10px">
-                        <el-button type="primary" size="mini" icon="el-icon-upload2">保存</el-button>
+                        <upload :limit="30" :file-list="details.map(i=>i.url)" @success="uploadDetail"
+                                @del="delDetail"></upload>
                     </div>
                 </div>
                 <div v-if="step===3">
-                    <div v-for="(item,index) in specifications" :key="index">
-                        <div class="layout-title">{{item.title}}
-                            <el-button style="margin-left: 10px" size="mini" icon="el-icon-plus" round
-                                       @click="addSpecification(index)">新增
+                    <div class="layout-title">商品规格
+                        <el-button @click="addSpecification" size="mini" icon="el-icon-plus">新增</el-button>
+                    </div>
+                    <div v-for="(item,index) in specifications" :key="index" style="position: relative;">
+                        <div class="layout-title">
+                            <el-input style="width: 200px" v-model="item.title" placeholder="输入规格项"/>
+                            <el-button style="margin-left: 10px" icon="el-icon-plus"
+                                       @click="addSpecificationValue(index)">新增
                             </el-button>
                         </div>
                         <div class="layout-content specification-wrapper">
                             <div class="attr-wrapper" v-for="(p,i) in item.values" :key="i">
                                 <el-input v-model="p.value" :placeholder="'输入'+item.title"/>
-                                <div style="margin-top: 10px">
-                                    <mini-upload :limit="5" :file-list="p.albums"
-                                                 v-if="item.isUploadPic"
-                                                 @success="e=>uploadSpecPic(e,index,i)"
-                                                 @del="e=>delSpecPic(e,index,i)"/>
-                                </div>
-                                <div class="del" @click="delSpecification(index,i)">x</div>
+                                <div class="del" @click="delSpecificationValue(index,i)">x</div>
                             </div>
                         </div>
+                        <div class="del-left" @click="delSpecification(index)">x</div>
                     </div>
                     <div class="layout-title">商品规格
                         <el-button @click="refreshSku" size="mini" icon="el-icon-refresh">刷新</el-button>
@@ -106,21 +77,14 @@
                                 <el-form-item v-for="(s,i) in item.specifications" :key="i" :label="s.key">
                                     <el-input style="width: 200px" v-model="s.value" disabled/>
                                 </el-form-item>
-                                <el-form-item label="状态">
-                                    <el-radio v-model="item.status" :label="1">上架</el-radio>
-                                    <el-radio v-model="item.status" :label="0">下架</el-radio>
-                                </el-form-item>
                                 <el-form-item label="价格">
-                                    <el-input v-model="item.price" style="width: 200px" placeholder="输入价格"/>
+                                    <el-input v-model="item.project_price" style="width: 200px" placeholder="输入价格"/>
                                 </el-form-item>
                                 <el-form-item label="库存">
-                                    <el-input v-model="item.inventory" style="width: 200px" placeholder="输入库存"/>
-                                </el-form-item>
-                                <el-form-item label="销量">
-                                    <el-input v-model="item.volume" style="width: 200px" placeholder="输入销量"/>
+                                    <el-input v-model="item.project_stock" style="width: 200px" placeholder="输入库存"/>
                                 </el-form-item>
                                 <el-form-item label="排序">
-                                    <el-input v-model="item.sort" style="width: 200px" placeholder="输入排序"/>
+                                    <el-input v-model="item.specs_seq" style="width: 200px" placeholder="输入排序"/>
                                 </el-form-item>
                             </el-form>
                             <div class="del">x</div>
@@ -147,8 +111,7 @@
 <script>
     import MiniUpload from "../../../components/upload-mini";
     import Upload from "../../../components/upload";
-    import {category_list} from "../../../api/goods_category";
-    import {goods_detail} from "../../../api/goods";
+    import {brand_options, goods_update, goods_detail} from "../../../api/goods";
 
     export default {
         name: "index",
@@ -158,56 +121,62 @@
         },
         data() {
             return {
-                spuId: '',
+                id: this.$route.query.id,
                 step: 1,
-                detail: {},
                 options: [],
                 form: {
-                    title: "",
-                    subTitle: "",
-                    cid: [],
-                    sort: 0,
-                    status: 1
+                    name: "",
+                    project_describe: "",
+                    brand_id: "",
                 },
                 rules: {
-                    title: [{required: true, message: '请输入'}],
-                    status: [{required: true, message: '请选择'}],
-                    sort: [{required: true, message: '请输入'}],
+                    name: [{required: true, message: '请输入'}],
+                    project_describe: [{required: true, message: '请输入'}],
+                    brand_id: [{required: true, message: '请选择'}],
                 },
                 albums: [],
                 details: [],
-                attributes: [{key: "", value: ""}],
                 specifications: [],
                 skus: []
             }
         },
         mounted() {
-            category_list().then(res => {
-                this.options = res.data;
-            });
-            this.spuId = this.$route.query.spuId;
-            goods_detail({spuId: this.spuId}).then(res => {
-                this.detail = res.data;
-                let cid = [];
-                if (res.data.cid1) {
-                    cid.push(res.data.cid1)
-                }
-                if (res.data.cid2) {
-                    cid.push(res.data.cid2)
-                }
+            goods_detail({id: this.id}).then(res => {
                 this.form = {
-                    title: res.data.title,
-                    subTitle: res.data.subTitle,
-                    cid: cid,
-                    sort: res.data.sort,
-                    status: res.data.status
+                    name: res.data.name,
+                    project_describe: res.data.project_describe,
+                    brand_id: res.data.brand_id,
                 };
-                this.albums = res.data.albums.map(i => i.url);
-                this.details = res.data.details.map(i => i.url);
-                this.attributes = res.data.attributes;
-                this.specifications = res.data.specifications;
-                this.skus = res.data.skus;
-            })
+                this.specifications = res.data.attributeKey.map(i => {
+                    let values = i.attributeValue.map(j => {
+                        return {
+                            value: j
+                        }
+                    });
+                    return {
+                        title: i.attribute_name,
+                        values: values
+                    }
+                });
+                let len = this.specifications.length;
+                this.skus = res.data.project_specs.map(i => {
+                    let arr = [];
+                    for (let j = 0; j < len; j++) {
+                        let item = i[j + ""];
+                        let key = this.specifications[j].title;
+                        arr.push({key: key, value: item[key]});
+                    }
+                    return {
+                        specs_seq: i.specs_seq,
+                        project_stock: i.project_stock,
+                        project_price: i.project_price,
+                        specifications: arr
+                    }
+                });
+            });
+            brand_options().then(res => {
+                this.options = res.list;
+            });
         },
         methods: {
             back() {
@@ -216,7 +185,44 @@
                 })
             },
             save() {
-
+                let params = {
+                    brand_id: this.form.brand_id + "",
+                    project_describe: this.form.project_describe,
+                    name: this.form.name,
+                };
+                if (this.albums.length === 0) {
+                    this.$message.error("请上传商品图片");
+                }
+                let arr = this.albums.map(i => {
+                    return {
+                        is_default: "0",
+                        url: i.path
+                    }
+                });
+                arr[0].is_default = "1";
+                params.shop_image = arr;
+                params.details = this.details.map(i => i.path);
+                let attribute_key = {};
+                this.specifications.map(i => {
+                    attribute_key[i.title] = i.values.map(j => j.value);
+                });
+                params.attribute_key = attribute_key;
+                params.project_specs = this.skus.map(i => {
+                    let specs = i.specifications.map(j => {
+                        let r = {};
+                        r[j.key] = j.value;
+                        return r;
+                    });
+                    return {
+                        specs_seq: i.specs_seq,
+                        project_stock: i.project_stock,
+                        project_price: i.project_price,
+                        project_specs: specs
+                    }
+                });
+                goods_add(params).then(() => {
+                    this.$message.success("商品新增成功");
+                })
             },
             uploadSpecPic(e, i1, i2) {
                 this.specifications[i1].values[i2].albums.push(e);
@@ -253,33 +259,24 @@
             delAttribute(e) {
                 this.attributes.splice(e, 1)
             },
-            addSpecification(e) {
-                this.specifications[e].values.push({value: "", albums: []})
+            delSpecification(i) {
+                this.specifications.splice(i)
             },
-            delSpecification(i, i2) {
-                for (let j = this.skus.length - 1; j >= 0; j--) {
-                    if (this.skus[j].specifications[i].value === this.specifications[i].values[i2].value) {
-                        this.skus.splice(j, 1);
-                    }
-                }
-                this.specifications[i].values.splice(i2, 1);
+            addSpecification() {
+                this.specifications.push({
+                    title: '',
+                    values: []
+                })
+            },
+            addSpecificationValue(i) {
+                this.specifications[i].values.push({value: ""})
+            },
+            delSpecificationValue(i, i2) {
+                this.specifications[i].values.splice(i2, 1)
             },
             refreshSku() {
+                this.skus = [];
                 this.combinationSku(this.skus, this.specifications, [], 0);
-            },
-            isExistSku(spec) {
-                for (let item of this.skus) {
-                    let arr = item.specifications.map(i => {
-                        return {
-                            key: i.key,
-                            value: i.value
-                        }
-                    });
-                    if (JSON.stringify(arr) === JSON.stringify(spec)) {
-                        return true;
-                    }
-                }
-                return false;
             },
             combinationSku(skus, specifications, temp, index) {
                 if (specifications.length === index) {
@@ -287,16 +284,12 @@
                     for (let i = 0; i < temp.length; i++) {
                         arr.push({key: specifications[i].title, value: temp[i].value});
                     }
-                    if (!this.isExistSku(arr)) {
-                        skus.push({
-                            specifications: arr,
-                            price: 0,
-                            inventory: 0,
-                            volume: 0,
-                            status: 0,
-                            sort: 0,
-                        });
-                    }
+                    skus.push({
+                        specifications: arr,
+                        project_stock: "0",
+                        project_price: "0",
+                        specs_seq: "0"
+                    });
                     return;
                 }
                 for (let i = 0; i < specifications[index].values.length; i++) {
@@ -402,6 +395,17 @@
         right: -5px;
         top: -12px;
         cursor: pointer;
+        z-index: 9999;
+    }
+
+    .del-left {
+        position: absolute;
+        color: #ff0000;
+        font-size: 20px;
+        right: 0;
+        top: -12px;
+        cursor: pointer;
+        z-index: 9999;
     }
 
     .card-border, .card-border-active {

@@ -16,29 +16,19 @@
 						<swiper-item>
 							<view class="wd-view">
 								<view v-for="(item,index) in wd" :key="index" class="wd-wrapper">
-									<image :src="item.image"></image>
-									<text>{{item.title}}</text>
+									<image :src="item.logo"></image>
+									<text>{{item.name}}</text>
 								</view>
-							</view>
-						</swiper-item>
-						<swiper-item>
-							<view class="wd-view">
-								<view v-for="(item,index) in wd" :key="index" class="wd-wrapper">
-									<image :src="item.image"></image>
-									<text>{{item.title}}</text>
-								</view>
+								<view v-if="wd.length<10" v-for="(item,index) in (10-wd.length)" :key="index"
+									class="wd-wrapper"></view>
 							</view>
 						</swiper-item>
 					</swiper>
-					<view class="wd-swiper-dot-view">
-						<view :class="[i===activeWdWipper?'wd-swiper-dot-active':'wd-swiper-dot']" v-for="i in 2"
-							:key="i">
-						</view>
-					</view>
+					
 				</view>
 				<view class="card-view m-top">
 					<view class="ad-view">
-						<image mode="widthFix" :src="item.image" v-for="(item,index) in ad" :key="index"
+						<image mode="widthFix" :src="item.imgList" v-for="(item,index) in activityAd" :key="index"
 							class="ad-image">
 						</image>
 					</view>
@@ -47,28 +37,28 @@
 					<swiper class="center-ad-swiper" indicator-dots indicator-color="rgba(0, 0, 0, .1)"
 						indicator-active-color="#ff5601" autoplay>
 						<swiper-item v-for="(item,index) in bannerAd" :key="index">
-							<image class="center-ad-image" :src="item.image"></image>
+							<image class="center-ad-image" :src="item.imgList"></image>
 						</swiper-item>
 					</swiper>
 					<view class="center-ad-right">
-						<view v-for="(item,index) in centerRightAd" :key="index">
-							<image class="center-ad-right-image" src="../../static/image/ad-1.png"></image>
+						<view v-for="(item,index) in goodsAd" :key="index">
+							<image class="center-ad-right-image" :src="item.imgList"></image>
 						</view>
 					</view>
 				</view>
 				<view class="center-bottom-view">
-					<view v-for="(item,index) in homeBottomAd" :key="index">
-						<image class="center-bottom-image" :src="item.image"></image>
+					<view v-for="(item,index) in goods2Ad" :key="index">
+						<image class="center-bottom-image" :src="item.imgList"></image>
 					</view>
 				</view>
 			</view>
 			<view class="goods-list-view">
-				<view v-for="(item,index) in goodsList" :key="index" class="goods-wrapper" @tap="linkDetail">
+				<view v-for="(item,index) in goodsList" :key="index" class="goods-wrapper" @tap="linkDetail(item.id)">
 					<view>
-						<image class="goods-image" :src="item.coverPic"></image>
+						<image class="goods-image" :src="item.thumbnail"></image>
 					</view>
 					<view class="goods-info">
-						<text>{{item.title}}</text>
+						<text>{{item.name}}</text>
 					</view>
 					<view>
 						<text class="goods-price">{{item.price}}</text>
@@ -80,96 +70,45 @@
 </template>
 
 <script>
+	import {
+		home,
+		goods_list
+	} from "../../api/home.js"
 	export default {
 		data() {
 			return {
 				l: 0,
 				activeWdWipper: 0,
-				goodsList: [{
-					title: "Apple iPhone 12  5G A14仿生 OLED全面屏 支持众多5G频段",
-					coverPic: "https://img2.sctx0818.com/20211019/077350240.jpg",
-					price: 75
-				}, {
-					title: "Apple iPhone 12  5G A14仿生 OLED全面屏 支持众多5G频段",
-					coverPic: "https://img2.sctx0818.com/20211019/077350240.jpg",
-					price: 75
-				}, {
-					title: "Apple iPhone 12  5G A14仿生 OLED全面屏 支持众多5G频段",
-					coverPic: "https://img2.sctx0818.com/20211019/077350240.jpg",
-					price: 75
-				}],
-				homeBottomAd: [{
-					image: '../../static/image/home-bottom-ad.png',
-				}, {
-					image: '../../static/image/home-bottom-ad.png',
-				}, {
-					image: '../../static/image/home-bottom-ad.png',
-				}, {
-					image: '../../static/image/home-bottom-ad.png',
-				}],
-				bannerAd: [{
-					image: '../../static/image/banner-ad-1.png',
-				}, {
-					image: '../../static/image/banner-ad-1.png',
-				}],
-				centerRightAd: [{
-					image: '../../static/image/ad-1.png'
-				}, {
-					image: '../../static/image/ad-1.png'
-				}],
-				wd: [{
-					image: '../../static/image/wd.png',
-					title: '天猫新品'
-				}, {
-					image: '../../static/image/wd-2.png',
-					title: '今日爆款'
-				}, {
-					image: '../../static/image/wd.png',
-					title: '天猫新品'
-				}, {
-					image: '../../static/image/wd-2.png',
-					title: '今日爆款'
-				}, {
-					image: '../../static/image/wd-3.png',
-					title: '分类'
-				}, {
-					image: '../../static/image/wd.png',
-					title: '天猫新品'
-				}, {
-					image: '../../static/image/wd-2.png',
-					title: '今日爆款'
-				}, {
-					image: '../../static/image/wd.png',
-					title: '天猫新品'
-				}, {
-					image: '../../static/image/wd-2.png',
-					title: '今日爆款'
-				}, {
-					image: '../../static/image/wd-3.png',
-					title: '分类'
-				}],
-				ad: [{
-					image: '../../static/image/ad-1.png',
-				}, {
-					image: '../../static/image/ad-1.png',
-				}, {
-					image: '../../static/image/ad-1.png',
-				}, {
-					image: '../../static/image/ad-1.png',
-				}]
+				goodsList: [],
+				activityAd: [],
+				goods2Ad: [],
+				wd: [],
+				goodsAd: [],
+				bannerAd: []
 			}
 		},
-		onShow() {
+		onLoad() {
 			let info = uni.getSystemInfoSync();
 			this.l = info.statusBarHeight;
+			home().then(res => {
+				this.wd = res.data.category;
+				let ad = res.data.advert;
+				this.goodsAd = ad.filter(i => i.advert_type === 1);
+				this.bannerAd = ad.filter(i => i.advert_type === 2);
+				this.activityAd = ad.filter(i => i.advert_type === 3);
+				this.goods2Ad = ad.filter(i => i.advert_type === 4);
+			});
+			goods_list().then(res => {
+				this.goodsList = res.list
+			})
 		},
 		methods: {
 			changeWd(e) {
 				this.activeWdWipper = e.detail.current;
 			},
-			linkDetail() {
+			linkDetail(id) {
 				uni.navigateTo({
-					url: "../goods/detail"
+					url: "../goods/detail?id=" + id
 				})
 			}
 
@@ -259,7 +198,7 @@
 		display: flex;
 		justify-content: space-between;
 		flex-wrap: wrap;
-		height: 280rpx;
+
 	}
 
 	.wd-wrapper {
@@ -267,16 +206,22 @@
 		flex-direction: column;
 		align-items: center;
 		width: 120rpx;
+		margin-top: 20rpx;
 	}
 
 	.wd-wrapper image {
 		width: 80rpx;
 		height: 80rpx;
+		border-radius: 80rpx;
 	}
 
 	.wd-wrapper text {
 		font-size: 28rpx;
-		color: #888888;
+		color: #000;
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 1;
+		overflow: hidden;
 	}
 
 	.wd-swiper {
@@ -368,6 +313,7 @@
 	}
 
 	.goods-list-view {
+		margin-top: 30rpx;
 		width: 100%;
 		background-color: #FFFFFF;
 		display: flex;
@@ -386,6 +332,7 @@
 		margin-top: 20rpx;
 		padding-bottom: 20rpx;
 		background-color: #FFFFFF;
+		overflow: hidden;
 	}
 
 	.goods-image {
@@ -395,6 +342,7 @@
 
 	.goods-info {
 		color: #000000;
+		font-weight: bold;
 		font-size: 30rpx;
 		display: -webkit-box;
 		-webkit-box-orient: vertical;
@@ -402,14 +350,17 @@
 		overflow: hidden;
 		padding: 0 20rpx;
 		box-sizing: border-box;
+		word-break: break-all;
+		word-wrap: break-word;
+		margin-top: 15rpx;
 	}
 
 	.goods-price {
-		color: #F0AD4E;
+		color: #E43D33;
 		font-size: 40rpx;
 		font-weight: 900;
 		padding: 0 20rpx;
-		margin-top: 15rpx;
+		margin-top: 30rpx;
 		box-sizing: border-box;
 	}
 

@@ -26,7 +26,7 @@
 				<image src="../../static/icon/right.png"></image>
 			</view>
 		</view>
-		<view class="ext-button">退出登录</view>
+		<view class="ext-button" @click="logout">退出登录</view>
 	</scroll-view>
 </template>
 
@@ -38,6 +38,11 @@
 			}
 		},
 		methods: {
+			logout() {
+				uni.navigateTo({
+					url: "../login/login"
+				})
+			}
 
 		}
 	}

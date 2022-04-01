@@ -48,11 +48,10 @@
                 <el-table-column label="状态" prop="audit_name"></el-table-column>
                 <el-table-column label="操作" width="200px">
                     <template slot-scope="scope">
-                        <el-button size="mini" type="primary" icon="el-icon-edit" @click="linkEdit(scope.row.spuId)">
+                        <el-button size="mini" type="primary" icon="el-icon-edit" @click="linkEdit(scope.row.id)">
                             编辑
                         </el-button>
-                        <el-button :disabled="scope.row.isDefault" size="mini" type="danger" icon="el-icon-delete"
-                                   @click="del(scope.row.id)">删除
+                        <el-button size="mini" type="danger" icon="el-icon-delete" @click="del(scope.row.id)">删除
                         </el-button>
                     </template>
                 </el-table-column>
@@ -64,7 +63,7 @@
 </template>
 
 <script>
-    import {goods_page, brand_options, category_options} from "../../../api/goods";
+    import {goods_page, brand_options, category_options, goods_del} from "../../../api/goods";
 
     export default {
         name: "index",
@@ -111,6 +110,14 @@
             })
         },
         methods: {
+            del(id) {
+                this.$confirm('确认删除该商品?')
+                    .then(() => {
+                        goods_del({id}).then(() => {
+                            this.getData();
+                        })
+                    })
+            },
             getData() {
                 let params = {
                     page: this.pageNumber,
@@ -149,9 +156,9 @@
             },
             linkEdit(id) {
                 this.$router.push({
-                    path: "/goods/detail",
+                    path: "/goods/edit",
                     query: {
-                        spuId: id
+                        id: id
                     }
                 })
             }
