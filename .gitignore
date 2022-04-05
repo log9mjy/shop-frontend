@@ -5,3 +5,4 @@
 /boss-app/.idea
 /boss-app/node_modules
 /user-app/node_modules
+/boss-app/dist
