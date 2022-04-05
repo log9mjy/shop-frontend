@@ -1,21 +1,14 @@
 <template>
 	<view class="page">
-		<view class="nav-view" :style="'margin-top:'+l+'px'">
-			<view class="nav-left">
-				<image src="../../static/icon/left.png" @tap="back"></image>
-				<text>我的收货地址</text>
-			</view>
-			<view class="nav-right">管理</view>
-		</view>
 		<scroll-view scroll-y class="scroll">
-			<view v-for="i in 100" class="addr-item">
+			<view v-for="(item,index) in tableData" :key="index" class="addr-item">
 				<view class="addr-content">
 					<view class="addr-info">
-						<text>往事随风</text>
-						<text>13082870526</text>
-						<text>默认</text>
+						<text>{{item.consignee}}</text>
+						<text>{{item.mobile}}</text>
+						<text v-if="item.is_default===1">默认</text>
 					</view>
-					<view class="addr-detail">四川省 成都市 青羊区 三利云锦北区</view>
+					<view class="addr-detail">{{item.address}}</view>
 				</view>
 				<view class="addr-item-icon">
 					<image src="../../static/icon/edit.png"></image>
@@ -32,20 +25,21 @@
 </template>
 
 <script>
+	import {
+		address_list
+	} from "../../api/address.js"
 	export default {
 		data() {
 			return {
-				l: 0
+				tableData: []
 			}
 		},
 		onShow() {
-			let info = uni.getSystemInfoSync();
-			this.l = info.statusBarHeight;
+			address_list().then(res => {
+				this.tableData = res.list;
+			})
 		},
 		methods: {
-			back() {
-				uni.navigateBack()
-			},
 			linkAdd() {
 				uni.navigateTo({
 					url: "./detail"

@@ -10,279 +10,94 @@
 			</view>
 		</view>
 		<view class="content-container">
-			<view class="content-view">
-				<lgd-tab :tabValue="tabValue" :tabIndex="tabIndex" underlineColor="#ff216a" @getIndex="getIndex" />
-				<swiper :current="tabIndex" class="content-swipper" @change="changeTab">
-					<swiper-item v-for="(item,index) in tabValue" :key="index">
-						<scroll-view style="height: 100%;" scroll-y @scrolltolower="load()"
-							@refresherrefresh="pullRefresh()" refresher-enabled>
-							<view class="waterfall-box h-flex-x h-flex-2">
-								<view>
-									<lgd-waterfall v-for="(l,i1) in leftList" :key="i1" :params="l" tag="left"
-										:index="i1" @height="onHeight" @click="onClick">
-									</lgd-waterfall>
-								</view>
-								<view>
-									<lgd-waterfall v-for="(r,i2) in rightList" :key="i2" :params="r" @height="onHeight"
-										@click="onClick" tag="right" :index="i2">
-									</lgd-waterfall>
-								</view>
-							</view>
-							<view class="load-txt">{{ajax.loadTxt}}</view>
-						</scroll-view>
+			<scroll-view class="category-left" scroll-y>
+				<view v-for="(item,index) in left" :key="index" :class="active===index?'cate-choice':''"
+					@click="choice(index)">
+					<text>{{item.name}}</text>
+				</view>
+			</scroll-view>
+			<scroll-view class="category-right" scroll-y>
+				<swiper class="cate-cover-pic">
+					<swiper-item>
+						<image class="cate-cover-pic" :src="right.logo"></image>
 					</swiper-item>
 				</swiper>
-			</view>
+				<view v-for="(item,index) in right.children" :key="index">
+					<view class="cate-title">{{item.name}}</view>
+					<view class="cate-view" v-if="item.children">
+						<view v-for="(child,i2) in item.children" :key="i2" class="cate-item">
+							<image :src="child.logo"></image>
+							<text>{{child.name}}</text>
+						</view>
+						<view v-for="i in (3-item.children.length%3)" class="cate-item">
+						</view>
+					</view>
+				</view>
+			</scroll-view>
 		</view>
 	</view>
 </template>
 
 <script>
-	import lgdTab from "../../components/lgd-tab/lgd-tab.vue"
-	import lgdWaterfall from "../../components/lgd-waterfall/lgd-waterfall.vue"
+	import {
+		goods_category
+	} from "../../api/goods.js"
 	export default {
-		components: {
-			lgdTab,
-			lgdWaterfall
-		},
+
 		data() {
 			return {
 				l: 0,
-				tabValue: ['全部', '出品', '数码', '搞笑'],
-				tabIndex: 0,
-				leftHeight: 0,
-				rightHeight: 0,
-				leftList: [],
-				rightList: [],
-				ajax: {
-					// 是否可以加载
-					load: true,
-					// 加载中提示文字
-					loadTxt: '',
-					// 每页的请求条件
-					rows: 10,
-					// 页码
-					page: 1,
-				}
+				left: [],
+				right: [],
+				active: 0
 			}
 		},
 		onShow() {
 			let info = uni.getSystemInfoSync();
 			this.l = info.statusBarHeight;
 		},
-		onReady() {
-			this.getList();
+		onLoad() {
+			goods_category().then(res => {
+				this.left = res.list;
+				if (this.left.length > 0) {
+					this.right = res.list[0];
+				}
+			})
 		},
 		methods: {
-			// 触底触发
-			load() {
-				this.getList();
-			},
-			// 下拉刷新
-			pullRefresh() {
-				// 正常情况下接口返回应该很会很快。故意延迟调用，让用户有在刷新的体验感
-				setTimeout(() => {
-					this.ajax.page = 1;
-					this.leftHeight = 0;
-					this.rightHeight = 0;
-					this.ajax.load = true;
-					this.getList();
-				}, 800);
-			},
-			changeTab(e) {
-				this.tabIndex = e.detail.current
-			},
-			getIndex(e) {
-				this.tabIndex = e;
-			}, // 监听高度变化
-			onHeight(height, tag) {
-				if (tag == 'left') {
-					this.leftHeight += height;
-				} else {
-					this.rightHeight += height;
-				}
-			},
-			// 组件点击事件
-			onClick(index, tag) {
-				console.log(index, tag);
-				// 对应的数据
-				if (tag == 'left') {
-					console.log(this.leftList[index]);
-				} else {
-					console.log(this.rightList[index]);
-				}
-				let direction = {
-					"left": '左',
-					"right": '右'
-				}
-				uni.showToast({
-					title: `${direction[tag]}侧列表第${index+1}个被点击`,
-					icon: 'none'
-				})
-			},
-			// 获取数据
-			getList() {
-				/* 
-					无真实数据，当前由 setTimeout 模拟异步请求、
-					自行替换 请求方法将数据 传入 addList() 方法中
-					自行解决数据格式，自行修改组件内布局和内容绑定
-				*/
-				if (!this.ajax.load) {
-					return;
-				}
-				this.ajax.load = false;
-				this.ajax.loadTxt = '加载中';
-
-				setTimeout(() => {
-					// 生成随机数方法
-					let random = (min = 0, max) => {
-						return Math.floor(Math.random() * max) + min;
-					}
-					// 待选的图片数据
-					let imgs = [];
-					// 待选的标题数据
-					let titles = [
-						'桃花坞里桃花庵，桃花庵里桃花仙；',
-						'桃花仙人种桃树，又摘桃花卖酒钱。',
-						'酒醒只在花前坐，酒醉还来花下眠；半醒半醉日复日，花落花开年复年。',
-						'但愿老死花酒间，不愿鞠躬车马前；',
-						'车尘马足富者趣，酒盏花枝贫者缘。若将富贵比贫贱，',
-						'一在平地一在天；若将贫贱比车马，他得驱驰我得闲。',
-						'别人笑我太疯癫，我笑他人看不穿；不见五陵豪杰墓，无花无酒锄作田。'
-					];
-
-					let res = [];
-					for (let i = 0; i < 10; i++) {
-						res.push({
-							url: `/uni_modules/helang-waterfall/static/waterfall/${random(0,3)}.jpg`,
-							title: titles[random(0, titles.length)],
-							money: random(9, 9999),
-							label: '官方自营',
-							shop: '唐诗三百首旗舰店'
-						})
-					}
-					this.addList(res)
-				}, 1000);
-
-			},
-			addList(res) {
-				// 获取到的数据，请注意数据结构
-				console.log(res);
-
-				if (!res || res.length < 1) {
-					this.ajax.loadTxt = '没有更多了';
-					return;
-				}
-
-				// 左右列表高度的差
-				let differ = this.leftHeight - this.rightHeight;
-				// 计算差值，用于确定优先插入那一边
-				let differVal = 0;
-
-				// 初始化左右列表的数据
-				let i = differ > 0 ? 1 : 0;
-
-				let [left, right] = [
-					[],
-					[]
-				];
-
-
-				// 获取插入的方向
-				let getDirection = (index) => {
-					/* 左侧高度大于右侧超过 600px 时，则前3条数据都插入到右边 */
-					if (differ >= 600 && index < 3) {
-						differVal = 1;
-						return 'right';
-					}
-
-					/* 右侧高度大于左侧超过 600px 时，则前3条数据都插入到左边 */
-					if (differ <= -600 && index < 3) {
-						differVal = -1;
-						return 'left';
-					}
-
-					/* 左侧高度大于右侧超过 350px 时，则前2条数据都插入到右边 */
-					if (differ >= 350 && index < 2) {
-						return 'right';
-					}
-					/* 右侧高度大于左侧超过 350px 时，则前2条数据都插入到左边 */
-					if (differ <= -350 && index < 2) {
-						differVal = -1;
-						return 'left';
-					}
-
-					/* 当前数据序号为偶数时，则插入到左边 */
-					if ((i + differVal) % 2 == 0) {
-						return 'left';
-					} else {
-						/* 当前数据序号为奇数时，则插入到右边 */
-						return 'right';
-					}
-				}
-
-				// 将数据源分为左右两个列表，容错差值请自行根据项目中的数据情况调节
-				res.forEach((item, index) => {
-					if (getDirection(index) == 'left') {
-						//console.log(`差值：${differ},方向：left，序号${index}`)
-						left.push(item);
-					} else {
-						//console.log(`差值：${differ},方向：right，序号${index}`)
-						right.push(item);
-					}
-					i++;
-				});
-
-				// 将左右列表的数据插入，第一页时则覆盖
-				if (this.ajax.page == 1) {
-					this.leftList = left;
-					this.rightList = right;
-					uni.stopPullDownRefresh();
-				} else {
-					this.leftList = [...this.leftList, ...left];
-					this.rightList = [...this.rightList, ...right];
-				}
-
-				this.ajax.load = true;
-				this.ajax.loadTxt = '上拉加载更多';
-				this.ajax.page++;
+			choice(i) {
+				this.active = i;
+				this.right = this.left[i];
 			}
 		}
 	}
 </script>
-<style lang="scss" scoped>
-	.waterfall-box {
-		padding: 20rpx 10rpx;
-		box-sizing: border-box;
-
-		>view {
-			padding: 0 10rpx;
-		}
-	}
-
-	.h-flex-x {
-		display: flex;
-		flex-direction: row;
-		flex-wrap: nowrap;
-		justify-content: flex-start;
-		align-items: flex-start;
-		align-content: flex-start;
-
-		&.h-flex-2 {
-			>view {
-				width: 50%;
-			}
-		}
-	}
-	
-	.load-txt{
-		padding: 0 0 20rpx 0;
-		text-align: center;
-		color: #999;
-		font-size: 24rpx;
-	}
-</style>
 <style>
+	.cate-view {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-between;
+	}
+
+	.cate-item {
+		margin-top: 40rpx;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		width: 120rpx;
+	}
+
+	.cate-item image {
+		width: 120rpx;
+		height: 120rpx;
+		border-radius: 15rpx;
+	}
+
+	.cate-item text {
+		margin-top: 15rpx;
+		font-size: 28rpx;
+	}
+
 	.page-head-bg {
 		width: 100%;
 	}
@@ -347,21 +162,50 @@
 	.content-container {
 		flex: 1;
 		overflow-y: auto;
-		background-color: #ff216a;
-	}
-
-	.content-view {
-		background-color: #FFFFFF;
-		border-top-left-radius: 30rpx;
-		border-top-right-radius: 30rpx;
-		height: 100%;
-		overflow: hidden;
 		display: flex;
-		flex-direction: column;
+		padding: 15rpx 0;
+		box-sizing: border-box;
 	}
 
-	.content-swipper {
-		flex: 1;
+	.category-left {
+		height: 100%;
+		width: 250rpx;
+	}
+
+	.category-left view {
+		height: 100rpx;
+		text-align: center;
+		line-height: 100rpx;
+		font-size: 32rpx;
+	}
+
+	.cate-choice {
+		height: 80rpx;
+		text-align: center;
+		line-height: 80rpx;
+		font-size: 40rpx;
+		font-weight: bold;
+		background-color: #FFFFFF;
+	}
+
+	.cate-cover-pic {
 		width: 100%;
+		height: 200rpx;
+		border-radius: 20rpx;
+	}
+
+
+	.category-right {
+		height: 100%;
+		width: 500rpx;
+		padding: 0 30rpx;
+		box-sizing: border-box;
+		background-color: #FFFFFF;
+	}
+
+	.cate-title {
+		font-size: 32rpx;
+		font-weight: bold;
+		margin-top: 40rpx;
 	}
 </style>

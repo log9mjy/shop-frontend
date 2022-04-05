@@ -2,7 +2,7 @@
 	<view class="page">
 		<view class="goods-albums-view">
 			<swiper class="swiper" autoplay @change="changeAlbums">
-				<swiper-item v-for="(item,index) in albums">
+				<swiper-item v-for="(item,index) in albums" :key="index">
 					<image class="goods-albums" :src="item"></image>
 				</swiper-item>
 			</swiper>
@@ -10,7 +10,7 @@
 		</view>
 		<view class="goods-container">
 			<view class="card-view">
-				<view class="goods-price">{{detail.price}}</view>
+				<view class="goods-price">{{currentSku.project_price}}</view>
 				<view class="goods-title">{{detail.name}}</view>
 				<view class="goods-sub-title">{{detail.project_describe}}</view>
 			</view>
@@ -53,8 +53,14 @@
 			</view>
 		</view>
 		<view class="bottom-view">
-			<view class="cart-btn">加入购物车</view>
-			<view class="buy-btn">立即购买</view>
+			<view class="tool-view">
+				<image src="../../static/icon/icon-kefu.png"></image>
+				<image src="../../static/icon/icon-collect.png"></image>
+			</view>
+			<view style="display: flex;margin-left: 30rpx;">
+				<view class="cart-btn" @click="openCart">加入购物车</view>
+				<view class="buy-btn" @click="openBuy">立即购买</view>
+			</view>
 		</view>
 		<uni-popup ref="sku" type="bottom">
 			<view class="popup-view">
@@ -64,15 +70,16 @@
 				<view class="goods-sku-info">
 					<image class="goods-sku-image" :src="albums[0]"></image>
 					<view class="goods-sku-desc">
-						<view class="goods-sku-title">已选择: 黑色 32G </view>
-						<view class="goods-price">728</view>
+						<view class="goods-sku-title">已选择: {{skuName}} </view>
+						<view class="goods-price">{{currentSku.project_price}}</view>
 					</view>
 				</view>
 				<view class="goods-spec-view">
 					<view v-for="(item,index) in specifications" :key="index" class="goods-spec-item">
 						<view class="goods-spec">{{item.title}}</view>
 						<view class="goods-spec-value-view">
-							<view bindtap="choiceSpec" v-for="(v,i) in item.values" :key="i" class="goods-spec-value">
+							<view @tap="choiceSpec(index,i)" v-for="(v,i) in item.values" :key="i"
+								:class="v.enable?(v.check?'goods-spec-value-choice':'goods-spec-value'):'goods-spec-value-disable'">
 								{{v.value}}
 							</view>
 						</view>
@@ -81,10 +88,10 @@
 				<view class="goods-num">
 					<view class="goods-num-title">购买数量</view>
 					<view>
-						<uni-number-box :min="1" :max="99"></uni-number-box>
+						<uni-number-box :min="1" :max="99" v-model="num"></uni-number-box>
 					</view>
 				</view>
-				<view class="sure-btn">确 认</view>
+				<view class="sure-btn" @tap="submit">确 认</view>
 			</view>
 		</uni-popup>
 	</view>
@@ -97,6 +104,9 @@
 	import {
 		goods_list
 	} from "../../api/home.js"
+	import {
+		cart_add
+	} from "../../api/cart.js"
 	export default {
 		data() {
 			return {
@@ -106,11 +116,18 @@
 				albums: [],
 				detail: {},
 				goodsList: [],
-				attr: ""
+				attr: "",
+				skuName: "",
+				skus: [],
+				currentSku: {},
+				type: '',
+				id: '',
+				num: 1
 			}
 		},
 		onLoad(options) {
 			let id = options.id;
+			this.id = id;
 			goods_detail({
 				id: id
 			}).then(res => {
@@ -125,11 +142,51 @@
 					title: data.name
 				});
 				this.albums = data.file_img;
-				this.attr = data.attributeKey.map(i => i.attribute_name).join("/")
-
+				this.attr = data.attributeKey.map(i => i.attribute_name).join("/");
+				this.specifications = data.attributeKey.map(i => {
+					let arr = i.attributeValue.map(j => {
+						return {
+							value: j,
+							check: false,
+							enable: false
+						}
+					})
+					return {
+						title: i.attribute_name,
+						values: arr
+					}
+				});
+				this.skus = data.project_specs;
+				this.currentSku = this.skus[0];
+				this.buildSkuName();
+				for (var i = 0; i < this.specifications.length; i++) {
+					let attrs = this.currentSku[i + ''];
+					let val = attrs[this.specifications[i].title];
+					for (var j = 0; j < this.specifications[i].values.length; j++) {
+						if (this.specifications[i].values[j].value === val) {
+							this.specifications[i].values[j].check = true;
+						}
+					}
+				}
+				this.buildSku();
 			})
 		},
 		methods: {
+			submit() {
+				if (this.type === 'cart') {
+					cart_add({
+						project_id: this.id,
+						project_num: this.num,
+						unit_price: this.currentSku.project_price.replace("元", ""),
+						project_specs_id: this.currentSku.id,
+					}).then(() => {
+						uni.showToast({
+							icon: "none",
+							title: "添加成功"
+						})
+					})
+				}
+			},
 			changeAlbums(e) {
 				this.current = e.detail.current + 1;
 			},
@@ -138,6 +195,81 @@
 			},
 			closePopup() {
 				this.$refs.sku.close()
+			},
+			openCart() {
+				this.$refs.sku.open();
+				this.type = 'cart';
+			},
+			openBuy() {
+				this.$refs.sku.open();
+				this.type = 'buy';
+			},
+			buildSkuName() {
+				let s = '';
+				for (var i = 0; i < this.specifications.length; i++) {
+					s += this.currentSku[i + ''][this.specifications[i].title] + ' ';
+				}
+				this.skuName = s;
+			},
+			choiceSpec(i1, i2) {
+				if (!this.specifications[i1].values[i2].enable) {
+					return;
+				}
+				this.specifications[i1].values.map(i => {
+					i.check = false;
+				});
+				this.specifications[i1].values[i2].check = true;
+				let arr = this.getSkuAttr();
+				this.currentSku = this.isExist(arr);
+				this.buildSkuName();
+				this.buildSku();
+			},
+			isExist(target) {
+				for (var i = 0; i < this.skus.length; i++) {
+					let sku = [];
+					for (var j = 0; j < this.specifications.length; j++) {
+						sku.push({
+							key: this.specifications[j].title,
+							value: this.skus[i][j + ''][this.specifications[j].title],
+						})
+					}
+					if (JSON.stringify(target) === JSON.stringify(sku)) {
+						return this.skus[i]
+					}
+				}
+			},
+			getSkuAttr() {
+				let temp = [];
+				for (var i = 0; i < this.specifications.length; i++) {
+					for (var k = 0; k < this.specifications[i].values.length; k++) {
+						if (this.specifications[i].values[k].check) {
+							temp[i] = {
+								key: this.specifications[i].title,
+								value: this.specifications[i].values[k].value,
+							};
+							break;
+						}
+					}
+				}
+				return temp;
+			},
+			buildSku() {
+				for (var j = 0; j < this.specifications.length; j++) {
+					let temp = this.getSkuAttr();
+					for (var k = 0; k < this.specifications[j].values.length; k++) {
+						temp[j] = {
+							key: this.specifications[j].title,
+							value: this.specifications[j].values[k].value
+						};
+						// 查询是否存在
+						let sku = this.isExist(temp);
+						if (sku) {
+							this.specifications[j].values[k].enable = true
+						} else {
+							this.specifications[j].values[k].enable = false
+						}
+					}
+				}
 			}
 		},
 
@@ -145,6 +277,17 @@
 </script>
 
 <style>
+	.tool-view {
+		display: flex;
+		justify-content: space-between;
+		flex: 1;
+	}
+
+	.tool-view image {
+		width: 50rpx;
+		height: 50rpx;
+	}
+
 	.goods-albums-view {
 		width: 100%;
 		height: 750rpx;
@@ -331,14 +474,15 @@
 	}
 
 	.goods-spec-value-choice {
-		color: #00a0e9;
-		border: 1rpx solid #00a0e9;
+		color: #FFFFFF;
+		background-color: #ff5500;
+		border: 1rpx solid #ff5500;
 	}
 
 	.goods-spec-value-disable {
-		color: #555555;
-		background-color: #999999;
-		border: 1rpx solid #999999;
+		color: #999;
+		background-color: #F1F1F1;
+		border: 1rpx dashed #A8A8A8;
 	}
 
 	.popup-del {
@@ -453,28 +597,32 @@
 		bottom: 0;
 		width: 100%;
 		background-color: #FFFFFF;
-		height: 100rpx;
+		height: 120rpx;
 		display: flex;
 		justify-content: center;
 		align-items: center;
+		padding: 0 30rpx;
+		box-sizing: border-box;
 	}
 
 	.cart-btn,
 	.buy-btn {
-		width: 300rpx;
+		width: 250rpx;
 		height: 80rpx;
 		text-align: center;
 		line-height: 80rpx;
-		margin-left: 30rpx;
 		color: #FFFFFF;
-		border-radius: 80rpx;
 	}
 
 	.cart-btn {
+		border-top-left-radius: 80rpx;
+		border-bottom-left-radius: 80rpx;
 		background: linear-gradient(to right, #f3a038, #ff850c);
 	}
 
 	.buy-btn {
+		border-top-right-radius: 80rpx;
+		border-bottom-right-radius: 80rpx;
 		background: linear-gradient(to right, #fa6318, #ff5500);
 	}
 </style>
