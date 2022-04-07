@@ -3,7 +3,7 @@
 		<view class="home-head" :style="'height:'+(l+60)+'px'">
 			<image src="../../static/image/home-bg.png" :style="'height:'+(l+60)+'px'" class="home-head-bg"></image>
 			<view class="search-view" :style="'top:'+(l+10)+'px'">
-				<view class="search-wrapper">
+				<view class="search-wrapper" @tap="linkSearch">
 					<view class="search-txt">春季上衣女</view>
 					<view class="search-button">搜索</view>
 				</view>
@@ -15,7 +15,7 @@
 					<swiper class="wd-swiper" @change="changeWd">
 						<swiper-item>
 							<view class="wd-view">
-								<view v-for="(item,index) in wd" :key="index" class="wd-wrapper">
+								<view v-for="(item,index) in wd" :key="index" class="wd-wrapper" @tap="linkAd(item)">
 									<image :src="item.logo"></image>
 									<text>{{item.name}}</text>
 								</view>
@@ -24,12 +24,12 @@
 							</view>
 						</swiper-item>
 					</swiper>
-					
+
 				</view>
 				<view class="card-view m-top">
 					<view class="ad-view">
 						<image mode="widthFix" :src="item.imgList" v-for="(item,index) in activityAd" :key="index"
-							class="ad-image">
+							class="ad-image" @tap="linkAd(item)">
 						</image>
 					</view>
 				</view>
@@ -37,18 +37,18 @@
 					<swiper class="center-ad-swiper" indicator-dots indicator-color="rgba(0, 0, 0, .1)"
 						indicator-active-color="#ff5601" autoplay>
 						<swiper-item v-for="(item,index) in bannerAd" :key="index">
-							<image class="center-ad-image" :src="item.imgList"></image>
+							<image class="center-ad-image" :src="item.imgList" @tap="linkAd(item)"></image>
 						</swiper-item>
 					</swiper>
 					<view class="center-ad-right">
 						<view v-for="(item,index) in goodsAd" :key="index">
-							<image class="center-ad-right-image" :src="item.imgList"></image>
+							<image class="center-ad-right-image" :src="item.imgList" @tap="linkAd(item)"></image>
 						</view>
 					</view>
 				</view>
 				<view class="center-bottom-view">
 					<view v-for="(item,index) in goods2Ad" :key="index">
-						<image class="center-bottom-image" :src="item.imgList"></image>
+						<image class="center-bottom-image" :src="item.imgList" @tap="linkAd(item)"></image>
 					</view>
 				</view>
 			</view>
@@ -106,9 +106,19 @@
 			changeWd(e) {
 				this.activeWdWipper = e.detail.current;
 			},
+			linkAd(item) {
+				uni.navigateTo({
+					url: item.link
+				})
+			},
 			linkDetail(id) {
 				uni.navigateTo({
 					url: "../goods/detail?id=" + id
+				})
+			},
+			linkSearch() {
+				uni.navigateTo({
+					url: "../goods/search"
 				})
 			}
 

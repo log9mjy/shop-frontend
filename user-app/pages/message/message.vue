@@ -5,13 +5,13 @@
 			<view class="head-title-view" :style="'top:'+(l+10)+'px'">
 				<view class="head-title-wrapper">
 					<text class="head-title">消息</text>
-					<text class="head-sub-title">(38)</text>
 				</view>
 			</view>
 		</view>
 		<scroll-view class="content-container" scroll-y>
 			<view class="content-view">
-				<view v-for="(item,index) in conversationList" :key="index" class="conversation-item">
+				<view v-for="(item,index) in conversationList" :key="index" class="conversation-item"
+					@tap="linkDetail()">
 					<image class="conversation-avatar" :src="item.user.avatar"></image>
 					<view class="conversation-info">
 						<view class="conversation-nick">
@@ -78,7 +78,14 @@
 			}
 		},
 		methods: {
-
+			linkDetail() {
+				uni.navigateTo({
+					url: "../chat/chat?to=" + JSON.stringify({
+						nickname: '旗舰店',
+						avatar: '../../static/image/user-avatar.jpg'
+					})
+				})
+			}
 		}
 	}
 </script>

@@ -64,13 +64,6 @@
 			"style": {
 				"enablePullDownRefresh": false,
 				"navigationBarTitleText": "我的收货地址"
-				// "app-plus": {
-				// 	"titleNView": {
-				// 		"buttons": [{
-				// 			"text": "管理"
-				// 		}]
-				// 	}
-				// }
 			}
 
 		}, {
@@ -92,6 +85,51 @@
 				"enablePullDownRefresh": false
 			}
 
+		}, {
+			"path": "pages/order/settlement",
+			"style": {
+				"navigationBarTitleText": "结算",
+				"enablePullDownRefresh": false
+			}
+		}, {
+			"path": "pages/order/list",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+		}, {
+			"path": "pages/order/detail",
+			"style": {
+				"navigationBarTitleText": "详情",
+				"enablePullDownRefresh": false
+			}
+		}, {
+			"path": "pages/chat/chat",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "pages/about/about",
+			"style": {
+				"navigationBarTitleText": "关于我们",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "pages/goods/list",
+			"style": {
+				"navigationBarTitleText": "商品列表",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "pages/goods/search",
+			"style": {
+				"navigationBarTitleText": "商品搜索",
+				"enablePullDownRefresh": false
+			}
 		}
 	],
 	"globalStyle": {

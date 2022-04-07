@@ -5,10 +5,10 @@
 			<view class="info-view" :style="'top:'+(l+10)+'px'">
 				<view class="user-info-view">
 					<view class="user-info">
-						<image src="../../static/image/user-avatar.jpg"></image>
+						<image :src="user.photo"></image>
 						<view class="user-nick-view">
-							<view class="user-nick">秋风竹韵</view>
-							<view class="user-number">淘宝账号: 45646546554</view>
+							<view class="user-nick">{{user.username}}</view>
+							<view class="user-number">手机号: {{user.mobile}}</view>
 						</view>
 					</view>
 					<view class="user-set" @tap="linkSet()">
@@ -36,35 +36,30 @@
 				<view class="user-order-view">
 					<view class="user-order-nav">
 						<view class="user-order-title">我的订单</view>
-						<view class="user-order-nav-icon">
+						<view class="user-order-nav-icon" @tap="linkOrder(-1)">
 							<text>全部</text>
 							<image src="../../static/icon/right.png"></image>
 						</view>
 					</view>
 					<view class="user-order-container">
-						<view class="user-order-item">
+						<view class="user-order-item" @tap="linkOrder(1)">
 							<image src="../../static/icon/order-1.png"></image>
 							<text>待付款</text>
 							<view></view>
 						</view>
-						<view class="user-order-item">
+						<view class="user-order-item" @tap="linkOrder(2)">
 							<image src="../../static/icon/order-2.png"></image>
 							<text>待发货</text>
 							<view class="order-num">5</view>
 						</view>
-						<view class="user-order-item">
+						<view class="user-order-item" @tap="linkOrder(3)">
 							<image src="../../static/icon/order-3.png"></image>
 							<text>待收货</text>
 							<view></view>
 						</view>
-						<view class="user-order-item">
+						<view class="user-order-item" @tap="linkOrder(4)">
 							<image src="../../static/icon/order-4.png"></image>
 							<text>待评价</text>
-							<view></view>
-						</view>
-						<view class="user-order-item">
-							<image src="../../static/icon/order-5.png"></image>
-							<text>退款/售后</text>
 							<view></view>
 						</view>
 					</view>
@@ -75,7 +70,7 @@
 					</view>
 				</view>
 				<view class="card ad-view">
-					<view class="tool-item" v-for="(item,index) in tools" :key="index" @tap="linkAd">
+					<view class="tool-item" v-for="(item,index) in tools" :key="index" @tap="linkAd(item.path)">
 						<image :src="item.image"></image>
 						<text>{{item.title}}</text>
 					</view>
@@ -93,6 +88,7 @@
 		data() {
 			return {
 				l: 0,
+				user: {},
 				ad: [{
 					image: "../../static/image/ad-3.jpg"
 				}, {
@@ -100,17 +96,16 @@
 				}],
 				tools: [{
 					image: "../../static/icon/tool-1.png",
-					title: "收货地址"
-				}, {
-					image: "../../static/icon/tool-2.png",
-					title: "关于我们",
-					path: ""
+					title: "收货地址",
+					path: '../address/list'
 				}, ]
 			}
 		},
 		onShow() {
 			let info = uni.getSystemInfoSync();
 			this.l = info.statusBarHeight;
+			let user = uni.getStorageSync("info");
+			this.user = JSON.parse(user);
 		},
 		methods: {
 			linkSet() {
@@ -118,9 +113,14 @@
 					url: "set"
 				})
 			},
-			linkAd(){
+			linkAd(path) {
 				uni.navigateTo({
-					url: "../address/list"
+					url: path
+				})
+			},
+			linkOrder(type) {
+				uni.navigateTo({
+					url: "../order/list?type=" + type
 				})
 			}
 		}

@@ -186,6 +186,11 @@
 						})
 					})
 				}
+				if (this.type === 'buy') {
+					uni.navigateTo({
+						url: "../order/settlement"
+					})
+				}
 			},
 			changeAlbums(e) {
 				this.current = e.detail.current + 1;

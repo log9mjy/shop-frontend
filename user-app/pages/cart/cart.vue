@@ -5,32 +5,31 @@
 			<view class="head-title-view" :style="'top:'+(l+10)+'px'">
 				<view class="head-title-wrapper">
 					<text class="head-title">购物车</text>
-					<text class="head-sub-title">(2)</text>
 				</view>
 			</view>
 		</view>
 		<view class="content-view">
 			<scroll-view scroll-y style="height: 100%;">
 				<view style="padding: 0 30rpx;box-sizing: border-box;">
-					<view class="cart-item" v-for="i in 10">
+					<view class="cart-item" v-for="(item,index) in tableData" :key="index">
 						<view class="shop-info-view">
-							<radio color="#ff5601"></radio>
+							<radio color="#ff5601" :checked="item.check" @tap="choiceShop(index)"></radio>
 							<view class="shop-info-wrapper">
-								<image src="../../static/icon/mall.png" class="shop-label"></image>
-								<text class="shop-title">官方旗舰店</text>
+								<image :src="item.shop.logo" class="shop-label"></image>
+								<text class="shop-title">{{item.shop.title}}</text>
 								<image src="../../static/icon/right.png" class="right-icon"></image>
 							</view>
 						</view>
-						<view class="goods-info-view">
-							<radio color="#ff5601"></radio>
+						<view class="goods-info-view" v-for="(goods,i2) in item.goodsList" :key="i2">
+							<radio color="#ff5601" :checked="goods.check" @tap="choiceGoods(index,i2)"></radio>
 							<view>
-								<image class="goods-image" src="../../static/temp/goods.jpg"></image>
+								<image class="goods-image" :src="goods.coverPic"></image>
 							</view>
 							<view class="goods-title-view">
-								<text class="goods-title">花花公子男士外套春季2022新款春秋韩版潮流衣服秋冬休闲男装夹克</text>
+								<text class="goods-title">{{goods.title}}</text>
 								<view class="goods-price-view">
-									<text>78</text>
-									<text>x1</text>
+									<text>{{goods.price}}</text>
+									<text>x{{goods.num}}</text>
 								</view>
 							</view>
 						</view>
@@ -39,33 +38,140 @@
 			</scroll-view>
 		</view>
 		<view class="bottom-view">
-			<view class="radio-wrapper" @click="all=!all">
+			<view class="radio-wrapper" @tap="choiceAll">
 				<radio :checked="all" color="#ff5601"></radio>
 				<text>全选</text>
 			</view>
 			<view class="price-wrapper">
 				<text>合计</text>
-				<text>0</text>
+				<text>{{total}}</text>
 			</view>
-			<view class="cal-button">结算</view>
+			<view class="cal-button" @tap="submit">结算</view>
 		</view>
 	</view>
 </template>
 
 <script>
+	import {
+		cart_list
+	} from "../../api/cart.js"
 	export default {
 		data() {
 			return {
 				l: 0,
-				all: false
+				all: false,
+				total: '0',
+				tableData: [{
+					check: false,
+					shop: {
+						title: "官方旗舰店",
+						logo: "../../static/icon/mall.png"
+					},
+					goodsList: [{
+						check: false,
+						coverPic: '../../static/temp/goods.jpg',
+						title: '花花公子男士外套春季2022新款春秋韩版潮流衣服秋冬休闲男装夹克',
+						price: 78,
+						num: 4
+					}, {
+						check: false,
+						coverPic: '../../static/temp/goods.jpg',
+						title: '花花公子男士外套春季2022新款春秋韩版潮流衣服秋冬休闲男装夹克',
+						price: 78,
+						num: 8
+					}],
+				}]
 			}
 		},
 		onShow() {
 			let info = uni.getSystemInfoSync();
 			this.l = info.statusBarHeight;
+			// cart_list().then(res => {
+			// 	this.tableData = res.list;
+			// })
 		},
 		methods: {
-
+			submit() {
+				if (!this.isChoice()) {
+					getApp().globalData.toast("请选择");
+					return;
+				}
+				uni.navigateTo({
+					url: "../order/settlement"
+				})
+			},
+			choiceShop(i) {
+				this.tableData[i].check = !this.tableData[i].check;
+				this.tableData[i].goodsList.map(j => j.check = this.tableData[i].check);
+				this.checkAll();
+				this.calPrice();
+			},
+			choiceGoods(i1, i2) {
+				this.tableData[i1].goodsList[i2].check = !this.tableData[i1].goodsList[i2].check;
+				this.checkShop(this.tableData[i1]);
+				this.checkAll();
+				this.calPrice();
+			},
+			choiceAll() {
+				this.all = !this.all;
+				this.tableData.map(i => {
+					i.check = this.all;
+					i.goodsList.map(j => j.check = this.all)
+				})
+				this.calPrice();
+			},
+			checkShop(item) {
+				let f = false;
+				for (var i = 0; i < item.goodsList.length; i++) {
+					if (item.goodsList[i].check) {
+						f = true;
+						break;
+					}
+				}
+				item.check = f;
+			},
+			checkAll() {
+				let f = true;
+				for (var i = 0; i < this.tableData.length; i++) {
+					if (this.tableData[i].check) {
+						for (var j = 0; j < this.tableData[i].goodsList.length; j++) {
+							if (!this.tableData[i].goodsList[j].check) {
+								f = false;
+								break;
+							}
+						}
+					} else {
+						f = false;
+						break;
+					}
+				}
+				this.all = f;
+			},
+			calPrice() {
+				let sum = 0;
+				for (var i = 0; i < this.tableData.length; i++) {
+					if (this.tableData[i].check) {
+						for (var j = 0; j < this.tableData[i].goodsList.length; j++) {
+							if (this.tableData[i].goodsList[j].check) {
+								sum += (this.tableData[i].goodsList[j].price * this.tableData[i].goodsList[j].num);
+							}
+						}
+					}
+				}
+				this.total = sum;
+			},
+			isChoice() {
+				for (var i = 0; i < this.tableData.length; i++) {
+					if (this.tableData[i].check) {
+						for (var j = 0; j < this.tableData[i].goodsList.length; j++) {
+							if (this.tableData[i].goodsList[j].check) {
+								return true;
+							}
+						}
+					}
+				}
+				return false;
+			}
 		}
 	}
 </script>

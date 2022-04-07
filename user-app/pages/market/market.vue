@@ -2,7 +2,7 @@
 	<view class="page">
 		<view class="page-head" :style="'height:'+(l+60)+'px'">
 			<image src="../../static/image/home-bg.png" :style="'height:'+(l+60)+'px'" class="page-head-bg"></image>
-			<view class="search-view" :style="'top:'+(l+10)+'px'">
+			<view class="search-view" :style="'top:'+(l+10)+'px'" @tap="linkSearch()">
 				<image class="search-image" src="../../static/icon/search.png"></image>
 				<view class="search-split"></view>
 				<view class="search-text">春季卫衣</view>
@@ -25,7 +25,7 @@
 				<view v-for="(item,index) in right.children" :key="index">
 					<view class="cate-title">{{item.name}}</view>
 					<view class="cate-view" v-if="item.children">
-						<view v-for="(child,i2) in item.children" :key="i2" class="cate-item">
+						<view v-for="(child,i2) in item.children" :key="i2" class="cate-item" @tap="linkGoodsList">
 							<image :src="child.logo"></image>
 							<text>{{child.name}}</text>
 						</view>
@@ -68,6 +68,16 @@
 			choice(i) {
 				this.active = i;
 				this.right = this.left[i];
+			},
+			linkGoodsList() {
+				uni.navigateTo({
+					url: "../goods/list"
+				})
+			},
+			linkSearch() {
+				uni.navigateTo({
+					url: "../goods/search"
+				})
 			}
 		}
 	}
