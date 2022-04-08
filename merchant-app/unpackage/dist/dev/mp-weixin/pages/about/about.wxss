@@ -1,0 +1,11 @@
+
+.logo {
+	width: 200rpx;
+	height: 200rpx;
+}
+.tips {
+	margin-top: 30rpx;
+	color: #888;
+	font-size: 24rpx;
+}
+

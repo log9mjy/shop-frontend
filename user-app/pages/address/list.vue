@@ -44,6 +44,9 @@
 				uni.navigateTo({
 					url: "./detail"
 				})
+			},
+			onNavigationBarButtonTap() {
+
 			}
 		}
 	}

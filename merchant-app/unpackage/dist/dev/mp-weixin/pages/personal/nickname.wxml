@@ -1,0 +1,1 @@
+<view class="page padding"><view class="input-wrapper"><input focus="{{true}}" data-event-opts="{{[['input',[['__set_model',['','nick','$event',[]]]]]]}}" value="{{nick}}" bindinput="__e"/><view data-event-opts="{{[['tap',[['updateNick',['$event']]]]]}}" class="update-btn" bindtap="__e">修改</view></view></view>

@@ -28,7 +28,7 @@
 						<image src="../../static/icon/ac-2.png"></image>
 						<text>足迹</text>
 					</view>
-					<view class="user-ac-item">
+					<view class="user-ac-item" @tap="linkWallet">
 						<image src="../../static/icon/qc-5.png"></image>
 						<text>钱包</text>
 					</view>
@@ -121,6 +121,11 @@
 			linkOrder(type) {
 				uni.navigateTo({
 					url: "../order/list?type=" + type
+				})
+			},
+			linkWallet() {
+				uni.navigateTo({
+					url: "./wallet"
 				})
 			}
 		}

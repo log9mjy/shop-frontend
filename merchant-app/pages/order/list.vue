@@ -1,0 +1,227 @@
+<template>
+	<view class="page padding">
+		<view v-if="orderList.length!==0">
+			<view v-for="(item,index) in orderList" :key="index" class="card order-item" @tap="linkDetail">
+				<view class="order-top">
+					<view class="order-no">{{item.orderNo}}</view>
+					<view class="order-status">待付款</view>
+				</view>
+				<view>
+					<view v-for="(item,index) in item.orderItems" :key="index" class="goods-wrapper">
+						<image class="goods-pic" :src="item.coverPic"></image>
+						<view style="margin-left:20rpx">
+							<view class="goods-title">{{item.title}}</view>
+							<view class="goods-price">
+								<view>{{'¥ '+item.price}}</view>
+								<view class="goods-num">共 {{item.num}} 件</view>
+							</view>
+						</view>
+					</view>
+				</view>
+				<view class="order-operate">
+					<view class="total-price">
+						总计: {{'¥ '+item.total}}
+					</view>
+					<view class="button-view">
+						<view v-if="item.tradeStatus===0" class="close-button button center-xy" @tap="closeOrder">关闭
+						</view>
+						<view v-if="item.tradeStatus===0" class="buy-button button center-xy" @tap="pay">付款</view>
+						<view v-if="item.tradeStatus===2" class="close-button button center-xy" @tap="receive">收货</view>
+					</view>
+				</view>
+			</view>
+		</view>
+		<view class="empty-page" v-if="orderList.length===0">
+			<view class="empty-container">
+				<image class="empty-icon" src="../../static/image/empty-order.png"></image>
+				<text class="empty-tips">暂时还没有订单</text>
+			</view>
+		</view>
+	</view>
+</template>
+
+<script>
+	export default {
+		data() {
+			return {
+				orderList: [{
+					"id": 10102,
+					"orderNo": "856943920007872512",
+					"crateDate": "2021-06-22",
+					"orderItems": [{
+						"goodsId": 11657,
+						"title": "花花公子男士外套春季2022新款春秋韩版潮流衣服秋冬休闲男装夹克",
+						"coverPic": "../../static/temp/goods.jpg",
+						"unit": "袋",
+						"price": 50,
+						"num": 1
+					}],
+					"total": 50,
+					"tradeStatus": 2,
+					"refundStatus": 0
+				}]
+			}
+		},
+		onLoad(options) {
+			console.log(options)
+			if (options.type === '-1') {
+				uni.setNavigationBarTitle({
+					title: "全部"
+				})
+			}
+
+			if (options.type === '1') {
+				uni.setNavigationBarTitle({
+					title: "待付款"
+				})
+			}
+
+			if (options.type === '2') {
+				uni.setNavigationBarTitle({
+					title: "待发货"
+				})
+			}
+
+			if (options.type === '3') {
+				uni.setNavigationBarTitle({
+					title: "待收货"
+				})
+			}
+
+			if (options.type === '4') {
+				uni.setNavigationBarTitle({
+					title: "待评价"
+				})
+			}
+
+		},
+		methods: {
+			linkDetail() {
+				uni.navigateTo({
+					url: './detail'
+				})
+			}
+		}
+	}
+</script>
+
+<style>
+	.nav-wrapper {
+		height: 80rpx;
+		width: 100%;
+		display: flex;
+		background-color: #ffffff;
+	}
+
+	.nav-item,
+	.nav-item-active {
+		display: flex;
+		flex: 1;
+		color: #333333;
+		font-size: 28rpx;
+	}
+
+	.nav-item-active {
+		color: #009742;
+		position: relative;
+	}
+
+	.scroll {
+		width: 100%;
+		height: calc(100vh - 80rpx);
+		padding: 0 30rpx;
+		box-sizing: border-box;
+		font-size: 28rpx;
+		color: #333333;
+		background-color: #f7f7f7;
+	}
+
+	.nav-choice {
+		width: 40rpx;
+		height: 8rpx;
+		position: absolute;
+		bottom: 5rpx;
+	}
+
+	.order-item {
+		margin-top: 20rpx;
+	}
+
+	.order-top {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+
+	.order-no {
+		font-size: 24rpx;
+		color: #888888;
+	}
+
+	.order-status {
+		color: #ff0000;
+	}
+
+	.goods-wrapper {
+		display: flex;
+		margin-top: 20rpx;
+	}
+
+	.goods-pic {
+		width: 120rpx;
+		height: 120rpx;
+	}
+
+	.order-operate {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-top: 20rpx;
+	}
+
+	.total-price {
+		color: #ff0000;
+		font-weight: bold;
+	}
+
+	.button-view {
+		display: flex;
+	}
+
+	.button {
+		width: 142rpx;
+		height: 60rpx;
+		border-radius: 30rpx;
+	}
+
+	.close-button {
+		border: 2rpx solid #ff0000;
+		color: #ff0000;
+		margin-right: 15rpx;
+	}
+
+	.buy-button {
+		border: 2rpx solid #ff0000;
+		background-color: #ff0000;
+		color: #ffffff;
+	}
+
+	.goods-price {
+		display: flex;
+		align-items: center;
+	}
+
+	.goods-num {
+		font-size: 24rpx;
+		color: #888888;
+		margin-left: 15rpx;
+	}
+
+	.goods-title {
+		height: 80rpx;
+		width: 500rpx;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+</style>

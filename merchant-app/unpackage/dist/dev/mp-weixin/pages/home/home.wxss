@@ -1,0 +1,33 @@
+
+.page-head-bg {
+	width: 100%;
+}
+.page-head {
+	position: relative;
+}
+.head-title-view {
+	position: absolute;
+	bottom: 10px;
+	color: #FFFFFF;
+	padding-left: 15px;
+	box-sizing: border-box;
+}
+.head-title {
+	font-weight: 900;
+	font-size: 45rpx;
+}
+.head-sub-title {
+	margin-left: 10rpx;
+	font-weight: 800;
+	font-size: 30rpx;
+}
+.head-title-wrapper {
+	display: flex;
+	align-items: center;
+}
+.content-container {
+	background-color: #F8F8F8;
+	flex: 1;
+	height: 0;
+}
+
